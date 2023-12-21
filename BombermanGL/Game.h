@@ -24,6 +24,8 @@ public:
 
 	// basics
 	void Init();
+	void LoadResources();
+
 	void Menu();
 
 	void ProcessInput(float dt);
@@ -32,8 +34,6 @@ public:
 	void Render();
 	void DrawObject(GameObject* obj);
 	//void DrawStats();
-
-	//void Restart();
 
 	// game
 

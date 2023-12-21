@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="Texture.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="TextRenderer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Shader.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="ResourceManager.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderer.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="main.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libraries\Include\glad\glad.c">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Game.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="AABB.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="AABB.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="GameObject.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Game.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderer.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="ResourceManager.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Shader.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="TextRenderer.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Texture.h">
+      <Filter>header</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\shaders\vShader.vx">
+      <Filter>src</Filter>
+    </None>
+    <None Include="..\shaders\vTxtShader.vx">
+      <Filter>src</Filter>
+    </None>
+    <None Include="..\shaders\fTxtShader.ft">
+      <Filter>src</Filter>
+    </None>
+    <None Include="..\shaders\fShader.ft">
+      <Filter>src</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="header">
+      <UniqueIdentifier>{022edb96-5dbf-44f0-804f-e5026704a1ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src">
+      <UniqueIdentifier>{2544705e-df30-4ca7-885f-7ec471aeea69}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>

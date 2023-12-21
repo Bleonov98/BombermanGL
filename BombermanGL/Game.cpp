@@ -10,9 +10,7 @@ GameObject* map;
 
 void Game::Init()
 {
-    // resources
-    ResourceManager::LoadShader("../shaders/vShader.vx", "../shaders/fShader.ft", "spriteShader");
-    // ResourceManager::LoadTexture("../textures/map.png", true, "map");
+    LoadResources();
 
     // tools
     projection = glm::ortho(0.0f, static_cast<float>(this->width), static_cast<float>(this->height), 0.0f, -1.0f, 1.0f);
@@ -21,10 +19,20 @@ void Game::Init()
     cursorPos = glm::vec2(this->width / 2.0f - 50.0f, this->height / 2.0f);
 
     // background/map
-    map = new GameObject(glm::vec2(0.0f), glm::vec2(this->width, this->height));
-    // map->SetTexture(ResourceManager::GetTexture("map"));
+    map = new GameObject(glm::vec2(0.0f, 80.0f), glm::vec2(this->width, this->height - 80.0f));
+    map->SetTexture(ResourceManager::GetTexture("map"));
 
     // game objects
+}
+
+void Game::LoadResources()
+{
+    ResourceManager::LoadShader("../shaders/vShader.vx", "../shaders/fShader.ft", "spriteShader");
+
+    // sprites
+    ResourceManager::LoadTexture("../textures/map/map.png", false, "map");
+    ResourceManager::LoadTexture("../textures/map/stone.png", true, "stone");
+    ResourceManager::LoadTexture("../textures/map/brick.png", true, "brick");
 }
 
 void Game::Menu()
@@ -65,10 +73,6 @@ void Game::Update(float dt)
         // actions
 
         // update borders after position changes
-        for (auto i : objList)
-        {
-            i->UpdateAABB();
-        }
 
         // interactions
     }

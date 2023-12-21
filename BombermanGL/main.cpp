@@ -23,7 +23,7 @@ float lastFrame = 0.0f;
 double lastX;
 
 // Program
-Game gameName(SCR_WIDTH, SCR_HEIGHT);
+Game Bomber(SCR_WIDTH, SCR_HEIGHT);
 
 int main() {
 
@@ -32,7 +32,7 @@ int main() {
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 0);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
-    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "Name", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "BombermanGL", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to create GLFW window" << std::endl;
@@ -46,7 +46,7 @@ int main() {
 
     gladLoadGL();
 
-    gameName.Init();
+    Bomber.Init();
 
     while (!glfwWindowShouldClose(window))
     {
@@ -59,11 +59,11 @@ int main() {
         lastFrame = currentFrame;
 
         // updating
-        gameName.ProcessInput(deltaTime);
-        gameName.Update(deltaTime);
+        Bomber.ProcessInput(deltaTime);
+        Bomber.Update(deltaTime);
 
         // render
-        gameName.Render();
+        Bomber.Render();
 
         glfwSwapBuffers(window);
         glfwPollEvents();
@@ -83,15 +83,15 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
     // when a user presses the escape key, we set the WindowShouldClose property to true, closing the application
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS || gameName.close)
+    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS || Bomber.close)
         glfwSetWindowShouldClose(window, true);
     if (key >= 0 && key < 1024)
     {
         if (action == GLFW_PRESS)
-            gameName.Keys[key] = true;
+            Bomber.Keys[key] = true;
         else if (action == GLFW_RELEASE) {
-            gameName.Keys[key] = false;
-            gameName.KeysProcessed[key] = false;
+            Bomber.Keys[key] = false;
+            Bomber.KeysProcessed[key] = false;
         }
     }
 }
