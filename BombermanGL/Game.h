@@ -24,6 +24,7 @@ public:
 
 	// basics
 	void Init();
+	void InitGrid();
 	void LoadResources();
 
 	void Menu();
@@ -49,6 +50,11 @@ private:
 	std::vector<GameObject*> objList;
 
 	int width, height;
+
+	float ceilWidth, ceilHeight;
+	glm::vec2 ceilPos;
+	std::vector<std::vector<glm::vec2>> grid;
+
 	glm::vec2 cursorPos;
 
 	GameState gmState = MENU;

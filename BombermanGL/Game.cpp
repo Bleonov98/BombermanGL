@@ -25,6 +25,24 @@ void Game::Init()
     // game objects
 }
 
+void Game::InitGrid()
+{
+    grid.resize(11, std::vector<glm::vec2>(13, glm::vec2()));
+
+    ceilWidth = this->width * 0.065f;
+    ceilHeight = this->height * 0.065f;
+
+    float paddingX = this->width * 0.93f;
+
+    for (int i = 0; i < 11; ++i)
+    {
+        for (int j = 0; j < 13; ++j)
+        {
+            grid[i][j] = glm::vec2();
+        }
+    }
+}
+
 void Game::LoadResources()
 {
     ResourceManager::LoadShader("../shaders/vShader.vx", "../shaders/fShader.ft", "spriteShader");
