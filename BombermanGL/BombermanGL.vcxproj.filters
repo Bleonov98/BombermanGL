@@ -28,6 +28,7 @@
     <ClCompile Include="AABB.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="Brick.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h">
@@ -54,6 +55,7 @@
     <ClInclude Include="Texture.h">
       <Filter>header</Filter>
     </ClInclude>
+    <ClInclude Include="Brick.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\shaders\vShader.vx">

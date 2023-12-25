@@ -14,7 +14,7 @@ void Game::Init()
 
     // tools
     projection = glm::ortho(0.0f, static_cast<float>(this->width), static_cast<float>(this->height), 0.0f, -1.0f, 1.0f);
-    text = new TextRenderer(this->width, this->height);
+    text = new TextRenderer(this->width, this->height); 
     text->Load("../fonts/Garamond.ttf", 24);
     cursorPos = glm::vec2(this->width / 2.0f - 50.0f, this->height / 2.0f);
 
@@ -39,7 +39,7 @@ void Game::InitGrid()
         for (int j = 0; j < 13; ++j)
         {
             grid[i][j] = glm::vec2();
-        }
+        } 
     }
 }
 
