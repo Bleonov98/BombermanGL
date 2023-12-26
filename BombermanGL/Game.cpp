@@ -22,7 +22,7 @@ void Game::Init()
     map = new GameObject(glm::vec2(0.0f, 80.0f), glm::vec2(this->width, this->height - 80.0f));
     map->SetTexture(ResourceManager::GetTexture("map"));
 
-    // game objects
+    InitGameObjects();
 }
 
 void Game::InitGrid()
@@ -41,6 +41,33 @@ void Game::InitGrid()
             grid[i][j] = glm::vec2();
         } 
     }
+}
+
+void Game::InitGameObjects()
+{
+    InitBricks();
+}
+
+void Game::InitBricks()
+{
+    Brick* brick;
+
+    // solid bricks
+    for (int i = 0; i < grid.size(); ++i)
+    {
+        if (i % 2 == 0) continue;
+        for (int j = 0; j < grid[i].size(); ++j)
+        {
+            if (j % 2 == 0) continue;
+
+            brick = new Brick(grid[i][j], glm::vec2(ceilWidth, ceilHeight), SOLID, NONE);
+            brick->SetTexture(ResourceManager::GetTexture("stone"));
+            objList.push_back(brick);
+            brickList.push_back(brick);
+        }
+    }
+
+    // generating random bricks pos
 }
 
 void Game::LoadResources()
@@ -100,6 +127,11 @@ void Game::Render()
 {
     // background/map/stats
     DrawObject(map);
+    
+    for (auto i : brickList)
+    {
+        DrawObject(i);
+    }
 
     if (gmState == ACTIVE) {
         // game objects

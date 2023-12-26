@@ -12,12 +12,18 @@ enum BrickBonus {
 	FIRE,
 	BOMB,
 	SPEED,
-	LIFE
+	LIFE,
+	NONE
 };
 
 class Brick : public GameObject
 {
 public:
+
+	Brick(glm::vec2 position, glm::vec2 size, BrickType type, BrickBonus bonusType, float angle = 0.0f, glm::vec3 color = glm::vec3(1.0f)) : GameObject(position, size, angle, color) {
+		this->brickType = type;
+		this->brickBonus = bonusType;
+	};
 
 	BrickType GetBrickType() { return brickType; }
 	BrickBonus GetBrickBonus() { return brickBonus; }

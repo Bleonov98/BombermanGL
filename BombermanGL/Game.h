@@ -7,6 +7,7 @@
 #include "TextRenderer.h"
 #include "ResourceManager.h"
 #include "GameObject.h"
+#include "Brick.h"
 
 enum GameState {
 	MENU,
@@ -25,6 +26,10 @@ public:
 	// basics
 	void Init();
 	void InitGrid();
+
+	void InitGameObjects();
+	void InitBricks();
+
 	void LoadResources();
 
 	void Menu();
@@ -48,6 +53,7 @@ private:
 	glm::mat4 projection;
 
 	std::vector<GameObject*> objList;
+	std::vector<Brick*> brickList;
 
 	int width, height;
 
