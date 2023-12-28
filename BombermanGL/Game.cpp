@@ -22,23 +22,24 @@ void Game::Init()
     map = new GameObject(glm::vec2(0.0f, 80.0f), glm::vec2(this->width, this->height - 80.0f));
     map->SetTexture(ResourceManager::GetTexture("map"));
 
+    InitGrid();
     InitGameObjects();
 }
 
 void Game::InitGrid()
 {
-    grid.resize(11, std::vector<glm::vec2>(13, glm::vec2()));
+    grid.resize(11, std::vector<glm::vec2>(13, glm::vec2(0.0f, 0.0f)));
 
-    ceilWidth = this->width * 0.065f;
-    ceilHeight = this->height * 0.065f;
+    ceilWidth = this->width * 0.063f;
+    ceilHeight = this->height * 0.07f;
 
-    float paddingX = this->width * 0.93f;
+    float paddingX = this->width * 0.09f;
 
     for (int i = 0; i < 11; ++i)
     {
         for (int j = 0; j < 13; ++j)
         {
-            grid[i][j] = glm::vec2();
+            grid[i][j] = glm::vec2(paddingX + j * ceilWidth, 80.0f + ceilHeight + i * ceilHeight);
         } 
     }
 }
@@ -66,8 +67,10 @@ void Game::InitBricks()
             brickList.push_back(brick);
         }
     }
+}
 
-    // generating random bricks pos
+void Game::GenerateLevelBricks()
+{
 }
 
 void Game::LoadResources()
@@ -75,9 +78,9 @@ void Game::LoadResources()
     ResourceManager::LoadShader("../shaders/vShader.vx", "../shaders/fShader.ft", "spriteShader");
 
     // sprites
-    ResourceManager::LoadTexture("../textures/map/map.png", false, "map");
-    ResourceManager::LoadTexture("../textures/map/stone.png", true, "stone");
-    ResourceManager::LoadTexture("../textures/map/brick.png", true, "brick");
+    ResourceManager::LoadTexture("map/map.png", false, "map");
+    ResourceManager::LoadTexture("map/stone.png", false, "stone");
+    ResourceManager::LoadTexture("map/brick.png", false, "brick");
 }
 
 void Game::Menu()

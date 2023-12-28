@@ -29,6 +29,7 @@ public:
 
 	void InitGameObjects();
 	void InitBricks();
+	void GenerateLevelBricks();
 
 	void LoadResources();
 
