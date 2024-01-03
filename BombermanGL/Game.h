@@ -29,7 +29,6 @@ public:
 
 	void InitGameObjects();
 	void InitBricks();
-	void GenerateLevelBricks();
 
 	void LoadResources();
 
@@ -60,6 +59,7 @@ private:
 
 	float ceilWidth, ceilHeight;
 	glm::vec2 ceilPos;
+	std::vector<int> mData;
 	std::vector<std::vector<glm::vec2>> grid;
 
 	glm::vec2 cursorPos;

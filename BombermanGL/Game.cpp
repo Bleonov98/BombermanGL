@@ -67,10 +67,12 @@ void Game::InitBricks()
             brickList.push_back(brick);
         }
     }
-}
 
-void Game::GenerateLevelBricks()
-{
+    // common bricks
+    brick = new Brick(grid[0][5], glm::vec2(ceilWidth, ceilHeight), SOLID, NONE);
+    brick->SetTexture(ResourceManager::GetTexture("brick"));
+    objList.push_back(brick);
+    brickList.push_back(brick);
 }
 
 void Game::LoadResources()
