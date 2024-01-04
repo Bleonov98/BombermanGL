@@ -29,6 +29,7 @@ void Game::Init()
 void Game::InitGrid()
 {
     grid.resize(11, std::vector<glm::vec2>(13, glm::vec2(0.0f, 0.0f)));
+    mData.resize(11, std::vector<int>(13, 0));
 
     ceilWidth = this->width * 0.063f;
     ceilHeight = this->height * 0.07f;
@@ -39,7 +40,7 @@ void Game::InitGrid()
     {
         for (int j = 0; j < 13; ++j)
         {
-            grid[i][j] = glm::vec2(paddingX + j * ceilWidth, 80.0f + ceilHeight + i * ceilHeight);
+            grid[i][j] = glm::vec2(paddingX + j * ceilWidth, 82.0f + ceilHeight + i * ceilHeight);
         } 
     }
 }
@@ -51,6 +52,7 @@ void Game::InitGameObjects()
 
 void Game::InitBricks()
 {
+    srand(time(NULL));
     Brick* brick;
 
     // solid bricks
@@ -62,17 +64,29 @@ void Game::InitBricks()
             if (j % 2 == 0) continue;
 
             brick = new Brick(grid[i][j], glm::vec2(ceilWidth, ceilHeight), SOLID, NONE);
-            brick->SetTexture(ResourceManager::GetTexture("stone"));
             objList.push_back(brick);
             brickList.push_back(brick);
+
+            mData[i][j] = 99;
         }
     }
 
-    // common bricks
-    brick = new Brick(grid[0][5], glm::vec2(ceilWidth, ceilHeight), SOLID, NONE);
-    brick->SetTexture(ResourceManager::GetTexture("brick"));
-    objList.push_back(brick);
-    brickList.push_back(brick);
+    // generate map
+    for (int i = 0; i < mData.size(); i++)
+    {
+        for (int j = 0; j < mData[i].size(); j++)
+        {
+            if ( ((i == 0 || i == 1) && (j == 0 || j == 1)) || mData[i][j] != 0 ) continue;
+            
+            mData[i][j] = rand() % 2;
+
+            if (mData[i][j] == 1) {
+                brick = new Brick(grid[i][j], glm::vec2(ceilWidth, ceilHeight), COMMON, NONE);
+                objList.push_back(brick);
+                brickList.push_back(brick);
+            }
+        }
+    }
 }
 
 void Game::LoadResources()

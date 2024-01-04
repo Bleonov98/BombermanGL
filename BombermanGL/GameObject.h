@@ -2,6 +2,7 @@
 #define GAMEOBJECT_H
 
 #include "Renderer.h"
+#include "ResourceManager.h"
 #include "AABB.h"
 
 class GameObject
