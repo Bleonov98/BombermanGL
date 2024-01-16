@@ -63,7 +63,7 @@ void Game::InitBricks()
         {
             if (j % 2 == 0) continue;
 
-            brick = new Brick(grid[i][j], glm::vec2(ceilWidth, ceilHeight), SOLID, NONE);
+            brick = new Brick(grid[i][j], glm::vec2(ceilWidth, ceilHeight), BRICK_SOLID);
             objList.push_back(brick);
             brickList.push_back(brick);
 
@@ -81,7 +81,7 @@ void Game::InitBricks()
             mData[i][j] = rand() % 2;
 
             if (mData[i][j] == 1) {
-                brick = new Brick(grid[i][j], glm::vec2(ceilWidth, ceilHeight), COMMON, NONE);
+                brick = new Brick(grid[i][j], glm::vec2(ceilWidth, ceilHeight), BRICK_COMMON);
                 objList.push_back(brick);
                 brickList.push_back(brick);
             }
@@ -94,9 +94,14 @@ void Game::LoadResources()
     ResourceManager::LoadShader("../shaders/vShader.vx", "../shaders/fShader.ft", "spriteShader");
 
     // sprites
+    
+    // - - - map, bricks
     ResourceManager::LoadTexture("map/map.png", false, "map");
     ResourceManager::LoadTexture("map/stone.png", false, "stone");
     ResourceManager::LoadTexture("map/brick.png", false, "brick");
+
+    // - - - bonuses
+    ResourceManager::LoadTexture("bonus/bonus_fire.png", false, "bonus_fire");
 }
 
 void Game::Menu()

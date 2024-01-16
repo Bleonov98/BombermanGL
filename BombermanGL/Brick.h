@@ -4,37 +4,32 @@
 #include "GameObject.h"
 
 enum BrickType {
-	SOLID,
-	COMMON
-};
-
-enum BrickBonus {
-	FIRE,
-	BOMB,
-	SPEED,
-	LIFE,
-	NONE
+	BRICK_SOLID,
+	BRICK_COMMON
 };
 
 class Brick : public GameObject
 {
 public:
 
-	Brick(glm::vec2 position, glm::vec2 size, BrickType type, BrickBonus bonusType, float angle = 0.0f, glm::vec3 color = glm::vec3(1.0f)) : GameObject(position, size, angle, color) {
+	Brick(glm::vec2 position, glm::vec2 size, BrickType type, float angle = 0.0f, glm::vec3 color = glm::vec3(1.0f)) : GameObject(position, size, angle, color) {
 		this->brickType = type;
-		this->brickBonus = bonusType;
 
-		if (type == SOLID) SetTexture(ResourceManager::GetTexture("stone"));
-		else if (type == COMMON) SetTexture(ResourceManager::GetTexture("brick"));
+		if (type == BRICK_SOLID) SetTexture(ResourceManager::GetTexture("stone"));
+		else if (type == BRICK_COMMON) SetTexture(ResourceManager::GetTexture("brick"));
 	};
 
+	void ChangeColor();
+	void BlinkAnimation(float dt);
+
 	BrickType GetBrickType() { return brickType; }
-	BrickBonus GetBrickBonus() { return brickBonus; }
+	bool IsBonusBrick() { return containBonus; }
 
 private:
 
 	BrickType brickType;
-	BrickBonus brickBonus;
+	bool containBonus = false;
+	float blinkAnimationTime = 0.0f, blinkAnimationDelay = 0.4f;
 
 };
 

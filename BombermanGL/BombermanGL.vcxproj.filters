@@ -31,6 +31,7 @@
     <ClCompile Include="Brick.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="Bonus.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h">
@@ -60,6 +61,7 @@
     <ClInclude Include="Brick.h">
       <Filter>header</Filter>
     </ClInclude>
+    <ClInclude Include="Bonus.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\shaders\vShader.vx">
