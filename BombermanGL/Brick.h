@@ -22,7 +22,11 @@ public:
 	void ChangeColor();
 	void BlinkAnimation(float dt);
 
+
+
 	BrickType GetBrickType() { return brickType; }
+
+	void SetBrickBonus() { this->containBonus = true; }
 	bool IsBonusBrick() { return containBonus; }
 
 private:

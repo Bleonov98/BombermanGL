@@ -10,6 +10,7 @@ GameObject* map;
 
 void Game::Init()
 {
+    srand(time(NULL));
     LoadResources();
 
     // tools
@@ -48,11 +49,11 @@ void Game::InitGrid()
 void Game::InitGameObjects()
 {
     InitBricks();
+    GenerateLevel();
 }
 
 void Game::InitBricks()
 {
-    srand(time(NULL));
     Brick* brick;
 
     // solid bricks
@@ -70,14 +71,18 @@ void Game::InitBricks()
             mData[i][j] = 99;
         }
     }
+}
 
-    // generate map
+void Game::GenerateLevel()
+{
+    Brick* brick;
+
     for (int i = 0; i < mData.size(); i++)
     {
         for (int j = 0; j < mData[i].size(); j++)
         {
-            if ( ((i == 0 || i == 1) && (j == 0 || j == 1)) || mData[i][j] != 0 ) continue;
-            
+            if (((i == 0 || i == 1) && (j == 0 || j == 1)) || mData[i][j] != 0) continue;
+
             mData[i][j] = rand() % 2;
 
             if (mData[i][j] == 1) {
@@ -87,6 +92,8 @@ void Game::InitBricks()
             }
         }
     }
+
+    brickList[rand() % brickList.size()]->SetBrickBonus();
 }
 
 void Game::LoadResources()
@@ -101,7 +108,11 @@ void Game::LoadResources()
     ResourceManager::LoadTexture("map/brick.png", false, "brick");
 
     // - - - bonuses
-    ResourceManager::LoadTexture("bonus/bonus_fire.png", false, "bonus_fire");
+    ResourceManager::LoadTexture("bonuses/bonus_fire.png", false, "bonus_fire");
+    ResourceManager::LoadTexture("bonuses/bonus_life.png", false, "bonus_life");
+    ResourceManager::LoadTexture("bonuses/bonus_speed.png", false, "bonus_speed");
+    ResourceManager::LoadTexture("bonuses/bonus_bomb.png", false, "bonus_bomb");
+    ResourceManager::LoadTexture("bonuses/bonus_jacket.png", false, "bonus_jacket");
 }
 
 void Game::Menu()
@@ -200,4 +211,6 @@ Game::~Game()
     }
     objList.clear();
     // -----
+
+    brickList.clear();
 }
