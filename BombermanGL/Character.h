@@ -5,7 +5,8 @@ enum MoveDirection {
 	CHAR_MOVERIGHT,
 	CHAR_MOVELEFT,
 	CHAR_MOVEUP,
-	CHAR_MOVEDOWN
+	CHAR_MOVEDOWN, 
+	CHAR_STAND
 };
 
 #include "GameObject.h"
@@ -22,10 +23,11 @@ public:
 	void SetSpeed(float speed) { this->speed = speed; }
 	float GetSpeed() { return this->speed; }
 
-private:
+protected:
 
 	float speed;
 	float moveAnimationTime = 0.0f, moveAnimationDelay = 0.2f;
+	MoveDirection mDir;
 
 };
 

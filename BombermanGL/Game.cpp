@@ -113,6 +113,8 @@ void Game::LoadResources()
     ResourceManager::LoadTexture("bonuses/bonus_speed.png", false, "bonus_speed");
     ResourceManager::LoadTexture("bonuses/bonus_bomb.png", false, "bonus_bomb");
     ResourceManager::LoadTexture("bonuses/bonus_jacket.png", false, "bonus_jacket");
+
+    // - - - player
 }
 
 void Game::Menu()
