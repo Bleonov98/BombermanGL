@@ -28,6 +28,8 @@ public:
 
 	void SetBrickBonus() { this->containBonus = true; }
 	bool IsBonusBrick() { return containBonus; }
+	
+	virtual ~Brick() {};
 
 private:
 

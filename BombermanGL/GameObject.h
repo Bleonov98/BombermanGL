@@ -36,6 +36,8 @@ public:
 	bool PointCollision(const glm::vec2 point) { return hBox.IntersectPoint(point); }
 	bool ObjectCollision(const GameObject& other) { return hBox.Intersects(other.hBox); }
 
+	virtual ~GameObject() {};
+
 protected:
 
 	Renderer mesh;

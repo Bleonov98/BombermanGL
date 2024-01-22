@@ -8,6 +8,8 @@ ISoundEngine* sound = irrklang::createIrrKlangDevice();
 
 GameObject* map;
 
+Player* player;
+
 void Game::Init()
 {
     srand(time(NULL));
@@ -50,6 +52,9 @@ void Game::InitGameObjects()
 {
     InitBricks();
     GenerateLevel();
+
+    player = new Player(grid[0][0], glm::vec2(ceilWidth - 10.0f, ceilHeight), 180.0f);
+    objList.push_back(player);
 }
 
 void Game::InitBricks()
@@ -115,6 +120,27 @@ void Game::LoadResources()
     ResourceManager::LoadTexture("bonuses/bonus_jacket.png", false, "bonus_jacket");
 
     // - - - player
+    ResourceManager::LoadTexture("player/player_down_0.png", true, "player_down_0");
+    ResourceManager::LoadTexture("player/player_down_1.png", true, "player_down_1");
+    ResourceManager::LoadTexture("player/player_down_2.png", true, "player_down_2");
+
+    ResourceManager::LoadTexture("player/player_up_0.png", true, "player_up_0");
+    ResourceManager::LoadTexture("player/player_up_1.png", true, "player_up_1");
+    ResourceManager::LoadTexture("player/player_up_2.png", true, "player_up_2");
+
+    ResourceManager::LoadTexture("player/player_left_0.png", true, "player_left_0");
+    ResourceManager::LoadTexture("player/player_left_1.png", true, "player_left_1");
+    ResourceManager::LoadTexture("player/player_left_2.png", true, "player_left_2");
+
+    ResourceManager::LoadTexture("player/player_right_0.png", true, "player_right_0");
+    ResourceManager::LoadTexture("player/player_right_1.png", true, "player_right_1");
+    ResourceManager::LoadTexture("player/player_right_2.png", true, "player_right_2");
+
+    ResourceManager::LoadTexture("player/player_death_0.png", true, "player_death_0");
+    ResourceManager::LoadTexture("player/player_death_1.png", true, "player_death_1");
+    ResourceManager::LoadTexture("player/player_death_2.png", true, "player_death_2");
+    ResourceManager::LoadTexture("player/player_death_3.png", true, "player_death_3");
+    ResourceManager::LoadTexture("player/player_death_4.png", true, "player_death_4");
 }
 
 void Game::Menu()
@@ -130,6 +156,13 @@ void Game::Menu()
 void Game::ProcessInput(float dt)
 {
     if (gmState == ACTIVE) {
+
+        if (this->Keys[GLFW_KEY_W]) player->Move(dt, CHAR_MOVEUP);
+        else if (this->Keys[GLFW_KEY_A]) player->Move(dt, CHAR_MOVELEFT);
+        else if (this->Keys[GLFW_KEY_S]) player->Move(dt, CHAR_MOVEDOWN);
+        else if (this->Keys[GLFW_KEY_D]) player->Move(dt, CHAR_MOVERIGHT);
+        else player->Move(dt, CHAR_STAND);
+
         if (this->Keys[GLFW_KEY_SPACE]) gmState = PAUSED;
     }
     else {
@@ -169,6 +202,8 @@ void Game::Render()
     {
         DrawObject(i);
     }
+
+    DrawObject(player);
 
     if (gmState == ACTIVE) {
         // game objects

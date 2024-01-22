@@ -2,31 +2,43 @@
 
 void Player::MoveAnimation(float dt)
 {
-	if (mDir == CHAR_MOVELEFT) {
+	moveAnimationTime += dt;
+	if (moveAnimationTime >= moveAnimationDelay) {
 
-	}
-	else if (mDir == CHAR_MOVERIGHT) {
+		if (mDir == CHAR_MOVELEFT) {
+			SetTexture(ResourceManager::GetTexture("player_left_" + std::to_string(animFrame)));
+		}
+		else if (mDir == CHAR_MOVERIGHT) {
+			SetTexture(ResourceManager::GetTexture("player_right_" + std::to_string(animFrame)));
+		}
+		else if (mDir == CHAR_MOVEUP) {
+			SetTexture(ResourceManager::GetTexture("player_up_" + std::to_string(animFrame)));
+		}
+		else if (mDir == CHAR_MOVEDOWN) {
+			SetTexture(ResourceManager::GetTexture("player_down_" + std::to_string(animFrame)));
+		}
+		else if (mDir == CHAR_STAND) {
+			SetTexture(ResourceManager::GetTexture("player_down_0"));
+		}
 
-	}
-	else if (mDir == CHAR_MOVEUP) {
+		if (animToggle) animFrame++;
+		else animFrame--;
 
-	}
-	else if (mDir == CHAR_MOVEDOWN) {
-
-	}
-	else if (mDir == CHAR_STAND) {
-
+		if (animFrame == 0 || animFrame == 2) animToggle = !animToggle;
+		
+		moveAnimationTime = 0.0f;
 	}
 }
 
 void Player::Move(float dt, MoveDirection dir)
-{
+{ 
+	if (this->mDir != dir) animFrame = 0, animToggle = true;
 	this->mDir = dir;
 
-	if (dir == CHAR_MOVELEFT) this->position.x -= this->speed * dt;
-	else if (dir == CHAR_MOVERIGHT) this->position.x += this->speed * dt;
-	else if (dir == CHAR_MOVEUP) this->position.y -= this->speed * dt;
-	else if (dir == CHAR_MOVEDOWN) this->position.x += this->speed * dt;
+	if (mDir == CHAR_MOVELEFT) this->position.x -= this->speed * dt;
+	else if (mDir == CHAR_MOVERIGHT) this->position.x += this->speed * dt;
+	else if (mDir == CHAR_MOVEUP) this->position.y -= this->speed * dt;
+	else if (mDir == CHAR_MOVEDOWN) this->position.y += this->speed * dt;
 
 	MoveAnimation(dt);
 }

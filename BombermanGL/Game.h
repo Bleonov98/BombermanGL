@@ -7,7 +7,11 @@
 #include "TextRenderer.h"
 #include "ResourceManager.h"
 #include "GameObject.h"
+
 #include "Brick.h"
+#include "Bonus.h"
+#include "CharacterObject.h"
+#include "Player.h"
 
 enum GameState {
 	MENU,

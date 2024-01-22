@@ -27,6 +27,8 @@ public:
 
 	BonusType GetBonusType() { return bonusType; }
 
+	virtual ~Bonus() {};
+
 private:
 
 	BonusType bonusType;
