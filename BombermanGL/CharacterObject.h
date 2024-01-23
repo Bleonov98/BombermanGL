@@ -20,6 +20,8 @@ public:
 
 	virtual void MoveAnimation(float dt) = 0;
 
+	void ProcessCollision(GameObject& other);
+
 	void SetSpeed(float speed) { this->speed = speed; }
 	float GetSpeed() { return this->speed; }
 

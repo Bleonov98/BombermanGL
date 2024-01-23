@@ -22,7 +22,7 @@ public:
 	void SetAngle(float angle) { this->angle = angle; }
 
 	void SetTexture(Texture texture) { mesh.AddTexture(texture); }
-	void UpdateAABB() { hBox.SetBorder(position, position + size); }
+	virtual void UpdateAABB() { hBox.SetBorder(position, position + size); }
 
 	// Get
 	glm::vec2 GetPos() { return position; }
@@ -33,8 +33,17 @@ public:
 	// main
 	void DrawObject() { mesh.Draw(); }
 
+	// collisions
+
 	bool PointCollision(const glm::vec2 point) { return hBox.IntersectPoint(point); }
 	bool ObjectCollision(const GameObject& other) { return hBox.Intersects(other.hBox); }
+
+	bool BottomCollision(const GameObject& other) { return hBox.IntersectBottom(other.hBox); }
+	bool RightCollision(const GameObject& other) { return hBox.IntersectRight(other.hBox); }
+	bool LeftCollision(const GameObject& other) { return hBox.IntersectLeft(other.hBox); }
+	bool TopCollision(const GameObject& other) { return hBox.IntersectTop(other.hBox); }
+
+	// - - - - - -
 
 	virtual ~GameObject() {};
 

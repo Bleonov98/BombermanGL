@@ -10,6 +10,8 @@ GameObject* map;
 
 Player* player;
 
+// - - - - - Init functions
+
 void Game::Init()
 {
     srand(time(NULL));
@@ -53,8 +55,9 @@ void Game::InitGameObjects()
     InitBricks();
     GenerateLevel();
 
-    player = new Player(grid[0][0], glm::vec2(ceilWidth - 10.0f, ceilHeight), 180.0f);
+    player = new Player(grid[0][0], glm::vec2(ceilWidth - 10.0f, ceilHeight - 5.0f), 180.0f);
     objList.push_back(player);
+    characterList.push_back(player);
 }
 
 void Game::InitBricks()
@@ -143,6 +146,8 @@ void Game::LoadResources()
     ResourceManager::LoadTexture("player/player_death_4.png", true, "player_death_4");
 }
 
+// - - - - - Main functions
+
 void Game::Menu()
 {
     text->RenderText("MENU", glm::vec2(this->width / 2.0f - 65.0f, this->height / 2.0f - 116.0f), 1.75f, glm::vec3(0.75f));
@@ -187,9 +192,13 @@ void Game::Update(float dt)
 
         // actions
 
-        // update borders after position changes
+        for (auto i : characterList)
+        {
+            i->UpdateAABB();
+        }
 
         // interactions
+        CheckCollisions();
     }
 }
 
@@ -237,6 +246,20 @@ void Game::DrawObject(GameObject* obj)
     obj->DrawObject();
 }
 
+void Game::CheckCollisions()
+{
+    // map/bricks collision
+    for (auto character : characterList)
+    {
+        for (auto brick : brickList)
+        {
+            character->ProcessCollision(*brick);
+        }
+    }
+}
+
+// - - - - - Others
+
 Game::~Game()
 {
     delete text;
@@ -250,4 +273,5 @@ Game::~Game()
     // -----
 
     brickList.clear();
+    characterList.clear();
 }

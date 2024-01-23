@@ -27,7 +27,7 @@ public:
 		this->width = width, this->height = height;
 	}
 
-	// basics
+	// Init
 	void Init();
 	void InitGrid();
 
@@ -37,6 +37,7 @@ public:
 
 	void LoadResources();
 
+	// Main functions
 	void Menu();
 
 	void ProcessInput(float dt);
@@ -47,6 +48,7 @@ public:
 	//void DrawStats();
 
 	// game
+	void CheckCollisions();
 
 	// pub vars
 	bool Keys[1024], KeysProcessed[1024], close = false;
@@ -56,8 +58,12 @@ public:
 private:
 
 	glm::mat4 projection;
-
+	
+	// object vectors
 	std::vector<GameObject*> objList;
+
+	std::vector<CharacterObject*> characterList;
+
 	std::vector<Brick*> brickList;
 
 	int width, height;
