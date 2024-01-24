@@ -48,7 +48,7 @@ public:
 	//void DrawStats();
 
 	// game
-	void CheckCollisions();
+	void CheckCollisions(float dt);
 
 	// pub vars
 	bool Keys[1024], KeysProcessed[1024], close = false;

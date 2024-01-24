@@ -18,12 +18,16 @@ public:
 		this->speed = speed;
 	};
 
-	virtual void MoveAnimation(float dt) = 0;
-
-	void ProcessCollision(GameObject& other);
-
+	// basic
 	void SetSpeed(float speed) { this->speed = speed; }
 	float GetSpeed() { return this->speed; }
+
+	// animations
+	virtual void MoveAnimation(float dt) = 0;
+
+	// collision
+	void ProcessCollision(GameObject& other, float dt);
+	void ProcessMapCollision(float dt);
 
 	virtual ~CharacterObject() {};
 

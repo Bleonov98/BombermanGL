@@ -55,7 +55,7 @@ void Game::InitGameObjects()
     InitBricks();
     GenerateLevel();
 
-    player = new Player(grid[0][0], glm::vec2(ceilWidth - 10.0f, ceilHeight - 5.0f), 180.0f);
+    player = new Player(grid[0][0], glm::vec2(ceilWidth, ceilHeight + 20.0f), 180.0f);
     objList.push_back(player);
     characterList.push_back(player);
 }
@@ -198,7 +198,7 @@ void Game::Update(float dt)
         }
 
         // interactions
-        CheckCollisions();
+        CheckCollisions(dt);
     }
 }
 
@@ -246,15 +246,17 @@ void Game::DrawObject(GameObject* obj)
     obj->DrawObject();
 }
 
-void Game::CheckCollisions()
+void Game::CheckCollisions(float dt)
 {
     // map/bricks collision
     for (auto character : characterList)
     {
         for (auto brick : brickList)
         {
-            character->ProcessCollision(*brick);
+            character->ProcessCollision(*brick, dt);
         }
+
+        character->ProcessMapCollision(dt);
     }
 }
 

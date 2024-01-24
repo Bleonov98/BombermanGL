@@ -11,9 +11,13 @@ public:
 		SetTexture(ResourceManager::GetTexture("player_down_0"));
 	};
 
-	void MoveAnimation(float dt) override;
-
+	// actions
 	void Move(float dt, MoveDirection dir);
+
+	// diff
+	void MoveAnimation(float dt) override;
+	void UpdateAABB() override { hBox.SetBorder(glm::vec2(position.x + 10.0f, position.y + 25.0f), position + glm::vec2(size.x - 10.0f, size.y)); }
+
 
 	virtual ~Player() {};
 
