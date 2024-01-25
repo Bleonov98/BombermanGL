@@ -36,8 +36,8 @@ void Game::InitGrid()
     grid.resize(11, std::vector<glm::vec2>(13, glm::vec2(0.0f, 0.0f)));
     mData.resize(11, std::vector<int>(13, 0));
 
-    ceilWidth = this->width * 0.063f;
-    ceilHeight = this->height * 0.07f;
+    cellWidth = this->width * 0.063f;
+    cellHeight = this->height * 0.07f;
 
     float paddingX = this->width * 0.09f;
 
@@ -45,7 +45,7 @@ void Game::InitGrid()
     {
         for (int j = 0; j < 13; ++j)
         {
-            grid[i][j] = glm::vec2(paddingX + j * ceilWidth, 82.0f + ceilHeight + i * ceilHeight);
+            grid[i][j] = glm::vec2(paddingX + j * cellWidth, 82.0f + cellHeight + i * cellHeight);
         } 
     }
 }
@@ -55,7 +55,7 @@ void Game::InitGameObjects()
     InitBricks();
     GenerateLevel();
 
-    player = new Player(grid[0][0], glm::vec2(ceilWidth, ceilHeight + 20.0f), 180.0f);
+    player = new Player(grid[0][0], glm::vec2(cellWidth, cellHeight + 20.0f), 180.0f);
     objList.push_back(player);
     characterList.push_back(player);
 }
@@ -72,7 +72,7 @@ void Game::InitBricks()
         {
             if (j % 2 == 0) continue;
 
-            brick = new Brick(grid[i][j], glm::vec2(ceilWidth, ceilHeight), BRICK_SOLID);
+            brick = new Brick(grid[i][j], glm::vec2(cellWidth, cellHeight), BRICK_SOLID);
             objList.push_back(brick);
             brickList.push_back(brick);
 
@@ -94,7 +94,7 @@ void Game::GenerateLevel()
             mData[i][j] = rand() % 2;
 
             if (mData[i][j] == 1) {
-                brick = new Brick(grid[i][j], glm::vec2(ceilWidth, ceilHeight), BRICK_COMMON);
+                brick = new Brick(grid[i][j], glm::vec2(cellWidth, cellHeight), BRICK_COMMON);
                 objList.push_back(brick);
                 brickList.push_back(brick);
             }
@@ -144,6 +144,9 @@ void Game::LoadResources()
     ResourceManager::LoadTexture("player/player_death_2.png", true, "player_death_2");
     ResourceManager::LoadTexture("player/player_death_3.png", true, "player_death_3");
     ResourceManager::LoadTexture("player/player_death_4.png", true, "player_death_4");
+
+    // - - - bomb
+    ResourceManager::LoadTexture("bomb/bomb.png", true, "bomb");
 }
 
 // - - - - - Main functions
@@ -168,7 +171,9 @@ void Game::ProcessInput(float dt)
         else if (this->Keys[GLFW_KEY_D]) player->Move(dt, CHAR_MOVERIGHT);
         else player->Move(dt, CHAR_STAND);
 
-        if (this->Keys[GLFW_KEY_SPACE]) gmState = PAUSED;
+        if (this->Keys[GLFW_KEY_SPACE]) ProcessBomb(dt);
+
+        if (this->Keys[GLFW_KEY_M]) gmState = PAUSED;
     }
     else {
         if (this->Keys[GLFW_KEY_UP] && !this->KeysProcessed[GLFW_KEY_UP] && cursorPos.y > this->height / 2.0f) {
@@ -212,7 +217,20 @@ void Game::Render()
         DrawObject(i);
     }
 
-    DrawObject(player);
+    for (auto i : bonusList)
+    {
+        DrawObject(i);
+    }
+
+    for (auto i : bombList)
+    {
+        DrawObject(i);
+    }
+
+    for (auto i : characterList)
+    {
+        DrawObject(i);
+    }
 
     if (gmState == ACTIVE) {
         // game objects
@@ -246,6 +264,8 @@ void Game::DrawObject(GameObject* obj)
     obj->DrawObject();
 }
 
+// - - - - - Game
+
 void Game::CheckCollisions(float dt)
 {
     // map/bricks collision
@@ -258,6 +278,43 @@ void Game::CheckCollisions(float dt)
 
         character->ProcessMapCollision(dt);
     }
+}
+
+void Game::ProcessBomb(float dt)
+{
+    // find nearest ceil
+
+    glm::vec2 nearestCell;
+    float minLength = 0.0f;
+    bool firstCheck = true;
+
+    for (auto i : grid)
+    {
+        for (auto j : i)
+        {
+            glm::vec2 diffVec = abs(player->GetPos() - j);
+            float diffLength = sqrt(powf(diffVec.x, 2) + powf(diffVec.y, 2));
+            
+            if (firstCheck) {
+                minLength = diffLength;
+                firstCheck = false;
+                nearestCell = j;
+            }
+            else if (diffLength < minLength) {
+                minLength = diffLength;
+                nearestCell = j;
+            }
+            
+        }
+    }
+
+    // add object
+
+    Bomb* bomb;
+
+    bomb = new Bomb(nearestCell, glm::vec2(cellWidth - 5.0f, cellHeight - 5.0f));
+    objList.push_back(bomb);
+    bombList.push_back(bomb);
 }
 
 // - - - - - Others
@@ -274,6 +331,8 @@ Game::~Game()
     objList.clear();
     // -----
 
-    brickList.clear();
     characterList.clear();
+    bonusList.clear();
+    bombList.clear();
+    brickList.clear();
 }

@@ -138,6 +138,7 @@
   <ItemGroup>
     <ClCompile Include="..\libraries\Include\glad\glad.c" />
     <ClCompile Include="AABB.cpp" />
+    <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="Bonus.cpp" />
     <ClCompile Include="Brick.cpp" />
     <ClCompile Include="CharacterObject.cpp" />
@@ -152,6 +153,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h" />
+    <ClInclude Include="Bomb.h" />
     <ClInclude Include="Bonus.h" />
     <ClInclude Include="Brick.h" />
     <ClInclude Include="CharacterObject.h" />

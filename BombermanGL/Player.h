@@ -18,12 +18,16 @@ public:
 	void MoveAnimation(float dt) override;
 	void UpdateAABB() override { hBox.SetBorder(glm::vec2(position.x + 10.0f, position.y + 25.0f), position + glm::vec2(size.x - 10.0f, size.y)); }
 
+	// gameplay
+	void Reload() { bombCapacity++; }
+	void PlaceBomb() { bombCapacity--; }
+	bool IsReloaded() { return bombCapacity > 0; }
 
 	virtual ~Player() {};
 
 private:
 
-
+	int bombCapacity = 1;
 
 };
 
