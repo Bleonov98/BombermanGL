@@ -3,7 +3,7 @@
 void Player::MoveAnimation(float dt)
 {
 	moveAnimationTime += dt;
-	if (moveAnimationTime >= moveAnimationDelay) {
+	if (moveAnimationTime >= moveAnimationInterval) {
 
 		if (mDir == CHAR_MOVELEFT) {
 			SetTexture(ResourceManager::GetTexture("player_left_" + std::to_string(animFrame)));

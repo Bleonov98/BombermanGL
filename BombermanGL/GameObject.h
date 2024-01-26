@@ -45,6 +45,9 @@ public:
 
 	// - - - - - -
 
+	bool IsDeleted() { return this->deleted; }
+	void DeleteObject() { this->deleted = true; }
+
 	virtual ~GameObject() {};
 
 protected:
@@ -56,6 +59,7 @@ protected:
 	glm::vec2 position, size;
 	float angle;
 
+	bool deleted = false;
 };
 
 #endif // !GAMEOBJECT_H

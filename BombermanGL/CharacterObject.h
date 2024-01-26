@@ -36,7 +36,7 @@ protected:
 	float speed;
 
 	// - animation
-	float moveAnimationTime = 0.0f, moveAnimationDelay = 0.18f;
+	float moveAnimationTime = 0.0f, moveAnimationInterval = 0.18f;
 	int animFrame = 0;
 	bool animToggle = true;
 

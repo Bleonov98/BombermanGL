@@ -5,6 +5,7 @@
 #include <GLFW/glfw3.h>
 
 #include <cmath>
+#include <thread>
 
 #include "TextRenderer.h"
 #include "ResourceManager.h"
@@ -13,6 +14,7 @@
 #include "Brick.h"
 #include "Bonus.h"
 #include "Bomb.h"
+#include "Explosion.h"
 
 #include "CharacterObject.h"
 #include "Player.h"
@@ -51,13 +53,25 @@ public:
 	void DrawObject(GameObject* obj);
 	//void DrawStats();
 
-	// game
 	void CheckCollisions(float dt);
+	void ProcessAnimations(float dt);
 
-	void ProcessBomb(float dt);
+	// game
+
+	void ProcessBomb();
+	void ProcessExplosion(glm::vec2 bombPosition);
+
+	// calculations
+	glm::vec2 FindNearestCell();
 
 	// pub vars
 	bool Keys[1024], KeysProcessed[1024], close = false;
+
+	// delete, destruct
+	void DeleteObjects();
+
+	template <typename T>
+	void DeleteObjectFromVector(std::vector<T*>& vector, bool deleteMemory);
 
 	~Game();
 

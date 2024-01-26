@@ -43,6 +43,9 @@
     <ClCompile Include="Bomb.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="Explosion.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h">
@@ -82,6 +85,9 @@
       <Filter>header</Filter>
     </ClInclude>
     <ClInclude Include="Bomb.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Explosion.h">
       <Filter>header</Filter>
     </ClInclude>
   </ItemGroup>

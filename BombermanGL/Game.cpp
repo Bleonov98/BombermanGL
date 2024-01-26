@@ -171,7 +171,7 @@ void Game::ProcessInput(float dt)
         else if (this->Keys[GLFW_KEY_D]) player->Move(dt, CHAR_MOVERIGHT);
         else player->Move(dt, CHAR_STAND);
 
-        if (this->Keys[GLFW_KEY_SPACE]) ProcessBomb(dt);
+        if (this->Keys[GLFW_KEY_SPACE]) ProcessBomb();
 
         if (this->Keys[GLFW_KEY_M]) gmState = PAUSED;
     }
@@ -196,7 +196,8 @@ void Game::Update(float dt)
     if (gmState == ACTIVE) {
 
         // actions
-
+        ProcessAnimations(dt);
+   
         for (auto i : characterList)
         {
             i->UpdateAABB();
@@ -204,6 +205,9 @@ void Game::Update(float dt)
 
         // interactions
         CheckCollisions(dt);
+
+        // deleting objects if they're done
+        DeleteObjects();
     }
 }
 
@@ -264,8 +268,6 @@ void Game::DrawObject(GameObject* obj)
     obj->DrawObject();
 }
 
-// - - - - - Game
-
 void Game::CheckCollisions(float dt)
 {
     // map/bricks collision
@@ -276,14 +278,60 @@ void Game::CheckCollisions(float dt)
             character->ProcessCollision(*brick, dt);
         }
 
+        for (auto bomb : bombList)
+        {
+            character->ProcessCollision(*bomb, dt);
+        }
+
         character->ProcessMapCollision(dt);
     }
 }
 
-void Game::ProcessBomb(float dt)
+void Game::ProcessAnimations(float dt)
 {
-    // find nearest ceil
+    for (auto i : bombList)
+    {
+        i->BombAnimation(dt);
+    }
+}
 
+// - - - - - Game
+
+void Game::ProcessBomb()
+{
+    if (!player->IsReloaded()) return;
+    player->PlaceBomb();
+
+    // add object
+    Bomb* bomb = new Bomb(FindNearestCell(), glm::vec2(cellWidth - 5.0f, cellHeight - 5.0f));
+    objList.push_back(bomb);
+    bombList.push_back(bomb);
+
+    std::thread bombDelay([&]() {
+        std::this_thread::sleep_for(std::chrono::duration<float>(bombList[bombList.size() - 1]->GetExplodeDelay()));
+        player->Reload();
+
+        ProcessExplosion(bombList[bombList.size() - 1]->GetPos());
+
+        bombList[bombList.size() - 1]->DeleteObject();
+    });
+    bombDelay.detach();
+}
+
+void Game::ProcessExplosion(glm::vec2 bombPosition)
+{
+    glm::vec2 explosionSize = glm::vec2(cellWidth, cellHeight) * static_cast<float>(player->GetExplosionRange());
+
+    Explosion* explosion = new Explosion(bombPosition, explosionSize);
+    
+
+    std::thread explosionTh([&]() {
+
+    });
+}
+
+glm::vec2 Game::FindNearestCell()
+{
     glm::vec2 nearestCell;
     float minLength = 0.0f;
     bool firstCheck = true;
@@ -294,7 +342,7 @@ void Game::ProcessBomb(float dt)
         {
             glm::vec2 diffVec = abs(player->GetPos() - j);
             float diffLength = sqrt(powf(diffVec.x, 2) + powf(diffVec.y, 2));
-            
+
             if (firstCheck) {
                 minLength = diffLength;
                 firstCheck = false;
@@ -304,20 +352,38 @@ void Game::ProcessBomb(float dt)
                 minLength = diffLength;
                 nearestCell = j;
             }
-            
+
         }
     }
 
-    // add object
-
-    Bomb* bomb;
-
-    bomb = new Bomb(nearestCell, glm::vec2(cellWidth - 5.0f, cellHeight - 5.0f));
-    objList.push_back(bomb);
-    bombList.push_back(bomb);
+    return nearestCell;
 }
 
 // - - - - - Others
+
+void Game::DeleteObjects()
+{
+    DeleteObjectFromVector(characterList, false);
+
+    DeleteObjectFromVector(brickList, false);
+    DeleteObjectFromVector(bonusList, false);
+    DeleteObjectFromVector(bombList, false);
+
+    DeleteObjectFromVector(objList, true);
+}
+
+template <typename T>
+void Game::DeleteObjectFromVector(std::vector<T*>& vector, bool deleteMemory)
+{
+    for (auto i = vector.begin(); i != vector.end();)
+    {
+        if ((*i)->IsDeleted()) {
+            if (deleteMemory) delete* i;
+            i = vector.erase(i);
+        }
+        else ++i;
+    }
+}
 
 Game::~Game()
 {
