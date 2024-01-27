@@ -147,6 +147,11 @@ void Game::LoadResources()
 
     // - - - bomb
     ResourceManager::LoadTexture("bomb/bomb.png", true, "bomb");
+
+    ResourceManager::LoadTexture("bomb/explosion_0.png", true, "explosion_0");
+    ResourceManager::LoadTexture("bomb/explosion_1.png", true, "explosion_1");
+    ResourceManager::LoadTexture("bomb/explosion_2.png", true, "explosion_2");
+    ResourceManager::LoadTexture("bomb/explosion_3.png", true, "explosion_3");
 }
 
 // - - - - - Main functions
@@ -207,6 +212,11 @@ void Game::Update(float dt)
         CheckCollisions(dt);
 
         // deleting objects if they're done
+        for (auto i : bombList)
+        {
+            if (i->IsDeleted()) ProcessExplosion(i->GetPos());
+        }
+
         DeleteObjects();
     }
 }
@@ -216,6 +226,11 @@ void Game::Render()
     // background/map/stats
     DrawObject(map);
     
+    for (auto i : explosionList)
+    {
+        DrawObject(i);
+    }
+
     for (auto i : brickList)
     {
         DrawObject(i);
@@ -293,6 +308,11 @@ void Game::ProcessAnimations(float dt)
     {
         i->BombAnimation(dt);
     }
+
+    for (auto i : explosionList)
+    {
+        i->ExplosionAnimation(dt);
+    }
 }
 
 // - - - - - Game
@@ -310,9 +330,6 @@ void Game::ProcessBomb()
     std::thread bombDelay([&]() {
         std::this_thread::sleep_for(std::chrono::duration<float>(bombList[bombList.size() - 1]->GetExplodeDelay()));
         player->Reload();
-
-        ProcessExplosion(bombList[bombList.size() - 1]->GetPos());
-
         bombList[bombList.size() - 1]->DeleteObject();
     });
     bombDelay.detach();
@@ -320,14 +337,18 @@ void Game::ProcessBomb()
 
 void Game::ProcessExplosion(glm::vec2 bombPosition)
 {
-    glm::vec2 explosionSize = glm::vec2(cellWidth, cellHeight) * static_cast<float>(player->GetExplosionRange());
+    glm::vec2 explosionSize = glm::vec2(cellWidth, cellHeight) * static_cast<float>(player->GetExplosionRange() * 1.5f);
+    glm::vec2 explosionPosition = glm::vec2(bombPosition.x - explosionSize.x * 0.5f + cellWidth * 0.5f, bombPosition.y - explosionSize.y * 0.5f + cellHeight * 0.5f);
 
-    Explosion* explosion = new Explosion(bombPosition, explosionSize);
-    
-
+    Explosion* explosion = new Explosion(explosionPosition, explosionSize);
+    objList.push_back(explosion);
+    explosionList.push_back(explosion);
+  
     std::thread explosionTh([&]() {
-
+        std::this_thread::sleep_for(std::chrono::duration<float>(explosionList[explosionList.size() - 1]->GetExplosionDuration()));
+        explosionList[explosionList.size() - 1]->DeleteObject();
     });
+    explosionTh.detach();
 }
 
 glm::vec2 Game::FindNearestCell()
@@ -400,5 +421,8 @@ Game::~Game()
     characterList.clear();
     bonusList.clear();
     bombList.clear();
-    brickList.clear();
+    brickList.clear(); 
+    explosionList.clear();
 }
+
+// make explosion, enemies

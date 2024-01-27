@@ -14,6 +14,8 @@ public:
 
 	float GetExplodeDelay() { return this->bombExplodeDelay; }
 
+	~Bomb() {};
+
 private:
 
 	float bombAnimationInterval = 0.8f, bombAnimationTime = 0.0f, bombExplodeDelay = 3.25f;

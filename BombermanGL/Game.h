@@ -6,6 +6,7 @@
 
 #include <cmath>
 #include <thread>
+#include <mutex>
 
 #include "TextRenderer.h"
 #include "ResourceManager.h"
@@ -86,6 +87,7 @@ private:
 	std::vector<Brick*> brickList;
 	std::vector<Bonus*> bonusList;
 	std::vector<Bomb*> bombList;
+	std::vector<Explosion*> explosionList;
 
 	int width, height;
 
