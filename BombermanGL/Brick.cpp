@@ -9,8 +9,25 @@ void Brick::ChangeColor()
 void Brick::BlinkAnimation(float dt)
 {
 	blinkAnimationTime += dt;
-	if (blinkAnimationTime >= blinkAnimationDelay) {
+	if (blinkAnimationTime >= blinkAnimationInterval) {
 		ChangeColor();
 		blinkAnimationTime = 0.0f;
+	}
+}
+
+void Brick::DestroyAnimation(float dt)
+{
+	if (animFrame > 4) {
+		DeleteObject();
+		return;
+	}
+
+	destroyAnimationTime += dt;
+	if (destroyAnimationTime >= destroyAnimationInterval) {
+		SetTexture(ResourceManager::GetTexture("brick_" + std::to_string(animFrame)));
+
+		destroyAnimationTime = 0.0f;
+
+		animFrame++;
 	}
 }

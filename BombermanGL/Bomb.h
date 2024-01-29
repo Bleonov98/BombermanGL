@@ -14,12 +14,15 @@ public:
 
 	float GetExplodeDelay() { return this->bombExplodeDelay; }
 
+	void Explode() { this->exploded = true; }
+	bool HasExploded() { return this->exploded; }
+
 	~Bomb() {};
 
 private:
 
 	float bombAnimationInterval = 0.8f, bombAnimationTime = 0.0f, bombExplodeDelay = 3.25f;
-	bool sizeAnimationToggle = false;
+	bool sizeAnimationToggle = false, exploded = false;
 
 };
 

@@ -113,7 +113,13 @@ void Game::LoadResources()
     // - - - map, bricks
     ResourceManager::LoadTexture("map/map.png", false, "map");
     ResourceManager::LoadTexture("map/stone.png", false, "stone");
+
     ResourceManager::LoadTexture("map/brick.png", false, "brick");
+    ResourceManager::LoadTexture("map/brick_0.png", true, "brick_0");
+    ResourceManager::LoadTexture("map/brick_1.png", true, "brick_1");
+    ResourceManager::LoadTexture("map/brick_2.png", true, "brick_2");
+    ResourceManager::LoadTexture("map/brick_3.png", true, "brick_3");
+    ResourceManager::LoadTexture("map/brick_4.png", true, "brick_4");
 
     // - - - bonuses
     ResourceManager::LoadTexture("bonuses/bonus_fire.png", false, "bonus_fire");
@@ -201,6 +207,14 @@ void Game::Update(float dt)
     if (gmState == ACTIVE) {
 
         // actions
+        for (auto i : bombList)
+        {
+            if (i->HasExploded()) {
+                ProcessExplosion(i->GetPos());
+                i->DeleteObject();
+            }
+        }
+
         ProcessAnimations(dt);
    
         for (auto i : characterList)
@@ -212,10 +226,6 @@ void Game::Update(float dt)
         CheckCollisions(dt);
 
         // deleting objects if they're done
-        for (auto i : bombList)
-        {
-            if (i->IsDeleted()) ProcessExplosion(i->GetPos());
-        }
 
         DeleteObjects();
     }
@@ -300,10 +310,24 @@ void Game::CheckCollisions(float dt)
 
         character->ProcessMapCollision(dt);
     }
+
+    // explosion collision
+    for (auto i : explosionList)
+    {
+        for (auto j : brickList)
+        {
+            if (i->ObjectCollision(*j) && j->GetBrickType() == BRICK_COMMON) j->DestroyBrick();
+        }
+    }
 }
 
 void Game::ProcessAnimations(float dt)
 {
+    for (auto i : brickList)
+    {
+        if (i->IsDestroyed()) i->DestroyAnimation(dt);
+    }
+
     for (auto i : bombList)
     {
         i->BombAnimation(dt);
@@ -330,7 +354,7 @@ void Game::ProcessBomb()
     std::thread bombDelay([&]() {
         std::this_thread::sleep_for(std::chrono::duration<float>(bombList[bombList.size() - 1]->GetExplodeDelay()));
         player->Reload();
-        bombList[bombList.size() - 1]->DeleteObject();
+        bombList[bombList.size() - 1]->Explode();
     });
     bombDelay.detach();
 }
@@ -343,11 +367,11 @@ void Game::ProcessExplosion(glm::vec2 bombPosition)
     Explosion* explosion = new Explosion(explosionPosition, explosionSize);
     objList.push_back(explosion);
     explosionList.push_back(explosion);
-  
+
     std::thread explosionTh([&]() {
         std::this_thread::sleep_for(std::chrono::duration<float>(explosionList[explosionList.size() - 1]->GetExplosionDuration()));
         explosionList[explosionList.size() - 1]->DeleteObject();
-    });
+        });
     explosionTh.detach();
 }
 
@@ -361,7 +385,7 @@ glm::vec2 Game::FindNearestCell()
     {
         for (auto j : i)
         {
-            glm::vec2 diffVec = abs(player->GetPos() - j);
+            glm::vec2 diffVec = abs((player->GetPos() + player->GetSize() / 3.5f) - j);
             float diffLength = sqrt(powf(diffVec.x, 2) + powf(diffVec.y, 2));
 
             if (firstCheck) {
@@ -389,6 +413,7 @@ void Game::DeleteObjects()
     DeleteObjectFromVector(brickList, false);
     DeleteObjectFromVector(bonusList, false);
     DeleteObjectFromVector(bombList, false);
+    DeleteObjectFromVector(explosionList, false);
 
     DeleteObjectFromVector(objList, true);
 }

@@ -11,3 +11,7 @@ void Explosion::ExplosionAnimation(float dt)
 		explosionAnimationTime = 0.0f;
 	}
 }
+
+void Explosion::ExplosionCollision(GameObject* other)
+{
+}

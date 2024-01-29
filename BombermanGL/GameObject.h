@@ -52,8 +52,8 @@ public:
 
 protected:
 
-	Renderer mesh;
 	AABB hBox;
+	Renderer mesh;
 
 	glm::vec3 color;
 	glm::vec2 position, size;

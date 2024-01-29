@@ -21,21 +21,25 @@ public:
 
 	void ChangeColor();
 	void BlinkAnimation(float dt);
-
-
+	void DestroyAnimation(float dt);
 
 	BrickType GetBrickType() { return brickType; }
 
 	void SetBrickBonus() { this->containBonus = true; }
 	bool IsBonusBrick() { return containBonus; }
 	
+	void DestroyBrick() { this->destroyed = true; }
+	bool IsDestroyed() { return destroyed; }
+
 	virtual ~Brick() {};
 
 private:
 
 	BrickType brickType;
-	bool containBonus = false;
-	float blinkAnimationTime = 0.0f, blinkAnimationDelay = 0.4f;
+	bool containBonus = false, destroyed = false;
+	float blinkAnimationTime = 0.0f, blinkAnimationInterval = 0.4f;
+	float destroyAnimationTime = 0.0f, destroyAnimationInterval = 0.04f;
+	int animFrame = 0;
 
 };
 

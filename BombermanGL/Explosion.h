@@ -11,8 +11,9 @@ public:
 	};
 
 	float GetExplosionDuration() { return explosionDuration; }
-
 	void ExplosionAnimation(float dt);
+
+	void ExplosionCollision(GameObject* other);
 
 	~Explosion() {};
 
