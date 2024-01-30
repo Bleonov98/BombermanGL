@@ -30,7 +30,7 @@ public:
 
 private:
 
-	int bombCapacity = 1, explosionRange = 2;
+	int bombCapacity = 1, explosionRange = 3;
 
 };
 

@@ -316,7 +316,7 @@ void Game::CheckCollisions(float dt)
     {
         for (auto j : brickList)
         {
-            if (i->ObjectCollision(*j) && j->GetBrickType() == BRICK_COMMON) j->DestroyBrick();
+           if (i->ExplosionCollision(*j) && j->GetBrickType() == BRICK_COMMON) j->DestroyBrick();
         }
     }
 }
@@ -364,7 +364,8 @@ void Game::ProcessExplosion(glm::vec2 bombPosition)
     glm::vec2 explosionSize = glm::vec2(cellWidth, cellHeight) * static_cast<float>(player->GetExplosionRange() * 1.5f);
     glm::vec2 explosionPosition = glm::vec2(bombPosition.x - explosionSize.x * 0.5f + cellWidth * 0.5f, bombPosition.y - explosionSize.y * 0.5f + cellHeight * 0.5f);
 
-    Explosion* explosion = new Explosion(explosionPosition, explosionSize);
+    Explosion* explosion = new Explosion(explosionPosition, explosionSize, player->GetExplosionRange());
+    explosion->SetAABB(mData, grid, bombPosition);
     objList.push_back(explosion);
     explosionList.push_back(explosion);
 
