@@ -46,6 +46,10 @@
     <ClCompile Include="Explosion.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Onion.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h">
@@ -90,6 +94,10 @@
     <ClInclude Include="Explosion.h">
       <Filter>header</Filter>
     </ClInclude>
+    <ClInclude Include="Enemy.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Onion.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\shaders\vShader.vx">

@@ -209,12 +209,12 @@ void Game::Update(float dt)
         // actions
         for (auto i : bombList)
         {
-            if (i->HasExploded()) {
+            if (i->Exploded()) {
                 ProcessExplosion(i->GetPos());
                 i->DeleteObject();
             }
         }
-
+         
         ProcessAnimations(dt);
    
         for (auto i : characterList)
@@ -226,7 +226,6 @@ void Game::Update(float dt)
         CheckCollisions(dt);
 
         // deleting objects if they're done
-
         DeleteObjects();
     }
 }
@@ -450,5 +449,3 @@ Game::~Game()
     brickList.clear(); 
     explosionList.clear();
 }
-
-// make explosion, enemies

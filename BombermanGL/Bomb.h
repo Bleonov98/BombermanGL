@@ -15,7 +15,7 @@ public:
 	float GetExplodeDelay() { return this->bombExplodeDelay; }
 
 	void Explode() { this->exploded = true; }
-	bool HasExploded() { return this->exploded; }
+	bool Exploded() { return this->exploded; }
 
 	~Bomb() {};
 
