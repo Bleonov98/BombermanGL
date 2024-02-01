@@ -30,6 +30,10 @@ void Player::MoveAnimation(float dt)
 	}
 }
 
+void Player::DeathAnimation(float dt)
+{
+}
+
 void Player::Move(float dt, MoveDirection dir)
 { 
 	if (this->mDir != dir) animFrame = 0, animToggle = true;

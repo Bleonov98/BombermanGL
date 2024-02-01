@@ -58,6 +58,8 @@ void Game::InitGameObjects()
     player = new Player(grid[0][0], glm::vec2(cellWidth, cellHeight + 20.0f), 180.0f);
     objList.push_back(player);
     characterList.push_back(player);
+
+    SpawnEnemies();
 }
 
 void Game::InitBricks()
@@ -158,6 +160,13 @@ void Game::LoadResources()
     ResourceManager::LoadTexture("bomb/explosion_1.png", true, "explosion_1");
     ResourceManager::LoadTexture("bomb/explosion_2.png", true, "explosion_2");
     ResourceManager::LoadTexture("bomb/explosion_3.png", true, "explosion_3");
+
+    // - - - onion
+    ResourceManager::LoadTexture("onion/onion_0.png", true, "onion_0");
+    ResourceManager::LoadTexture("onion/onion_1.png", true, "onion_1");
+    ResourceManager::LoadTexture("onion/onion_2.png", true, "onion_2");
+    ResourceManager::LoadTexture("onion/onion_death_0.png", true, "onion_death_0");
+    ResourceManager::LoadTexture("onion/onion_death_1.png", true, "onion_death_1");
 }
 
 // - - - - - Main functions
@@ -213,6 +222,11 @@ void Game::Update(float dt)
                 ProcessExplosion(i->GetPos());
                 i->DeleteObject();
             }
+        }
+
+        for (auto i : enemyList)
+        {
+            i->Move(dt);
         }
          
         ProcessAnimations(dt);
@@ -294,21 +308,35 @@ void Game::DrawObject(GameObject* obj)
 
 void Game::CheckCollisions(float dt)
 {
-    // map/bricks collision
-    for (auto character : characterList)
+    // map/bricks collisions
+        // Enemies
+    for (auto enemy : enemyList)
     {
         for (auto brick : brickList)
         {
-            character->ProcessCollision(*brick, dt);
+            if (enemy->ProcessCollision(*brick, dt)) enemy->ChangePosition();
         }
 
         for (auto bomb : bombList)
         {
-            character->ProcessCollision(*bomb, dt);
+            if (enemy->ProcessCollision(*bomb, dt)) enemy->ChangePosition();
         }
 
-        character->ProcessMapCollision(dt);
+        if (enemy->ProcessMapCollision(dt)) enemy->ChangePosition();
     }
+        // - - - - - -
+
+        // Player collision
+    for (auto brick : brickList)
+    {
+        player->ProcessCollision(*brick, dt);
+    }
+
+    for (auto bomb : bombList)
+    {
+        player->ProcessCollision(*bomb, dt);
+    }
+        // - - - - - - - - -
 
     // explosion collision
     for (auto i : explosionList)
@@ -318,6 +346,7 @@ void Game::CheckCollisions(float dt)
            if (i->ExplosionCollision(*j) && j->GetBrickType() == BRICK_COMMON) j->DestroyBrick();
         }
     }
+    // - - - - - - - - - - - 
 }
 
 void Game::ProcessAnimations(float dt)
@@ -375,6 +404,19 @@ void Game::ProcessExplosion(glm::vec2 bombPosition)
     explosionTh.detach();
 }
 
+void Game::SpawnEnemies()
+{
+    Onion* onion;
+
+    for (int i = 0; i < 3; ++i)
+    {
+        onion = new Onion(GetFreeRandomCell() + glm::vec2(2.5f), glm::vec2(cellWidth, cellHeight) - glm::vec2(5.0f), 150.0f);
+        objList.push_back(onion);
+        characterList.push_back(onion);
+        enemyList.push_back(onion);
+    }
+}
+
 glm::vec2 Game::FindNearestCell()
 {
     glm::vec2 nearestCell;
@@ -402,6 +444,22 @@ glm::vec2 Game::FindNearestCell()
     }
 
     return nearestCell;
+}
+
+glm::vec2 Game::GetFreeRandomCell()
+{
+    int row = rand() % 11, col = rand() % 13;
+    glm::vec2 freeCell;
+
+    while (true) {
+        row = rand() % 11, col = rand() % 13;
+        if (mData[row][col] == 0 && (row + col > 2)) {
+            freeCell = grid[row][col];
+            break;
+        }
+    }
+
+    return freeCell;
 }
 
 // - - - - - Others

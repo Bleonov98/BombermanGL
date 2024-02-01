@@ -11,12 +11,14 @@ public:
 		SetTexture(ResourceManager::GetTexture("player_down_0"));
 	};
 
+	void UpdateAABB() override { hBox.SetBorder(glm::vec2(position.x + 10.0f, position.y + 25.0f), position + glm::vec2(size.x - 10.0f, size.y)); }
+
 	// actions
 	void Move(float dt, MoveDirection dir);
 
-	// diff
+	// animations
 	void MoveAnimation(float dt) override;
-	void UpdateAABB() override { hBox.SetBorder(glm::vec2(position.x + 10.0f, position.y + 25.0f), position + glm::vec2(size.x - 10.0f, size.y)); }
+	void DeathAnimation(float dt) override;
 
 	// gameplay
 	void Reload() { this->bombCapacity++; }
@@ -30,7 +32,7 @@ public:
 
 private:
 
-	int bombCapacity = 1, explosionRange = 3;
+	int bombCapacity = 1, explosionRange = 2;
 
 };
 

@@ -20,6 +20,9 @@
 #include "CharacterObject.h"
 #include "Player.h"
 
+#include "Enemy.h"
+#include "Onion.h"
+
 enum GameState {
 	MENU,
 	ACTIVE,
@@ -61,9 +64,12 @@ public:
 
 	void ProcessBomb();
 	void ProcessExplosion(glm::vec2 bombPosition);
+	
+	void SpawnEnemies();
 
 	// calculations
 	glm::vec2 FindNearestCell();
+	glm::vec2 GetFreeRandomCell();
 
 	// pub vars
 	bool Keys[1024], KeysProcessed[1024], close = false;
@@ -82,7 +88,9 @@ private:
 	
 	// object vectors
 	std::vector<GameObject*> objList;
+
 	std::vector<CharacterObject*> characterList;
+	std::vector<Enemy*> enemyList;
 
 	std::vector<Brick*> brickList;
 	std::vector<Bonus*> bonusList;

@@ -38,7 +38,7 @@ void Explosion::SetAABB(std::vector<std::vector<int>>& gridData, std::vector<std
 			if (gridData[gridNum.first + i][gridNum.second] != 0 && checker[0] == 0) {
 				checker[0] = 1;
 
-				FirstEndPos.y -= 63.0f * (radius - i) - 35.0f;
+				FirstEndPos.y -= 63.0f * (radius - i) - 15.0f;
 				if (gridData[gridNum.first + i][gridNum.second] == 1) gridData[gridNum.first + i][gridNum.second] = 0;
 			}
 
@@ -46,7 +46,7 @@ void Explosion::SetAABB(std::vector<std::vector<int>>& gridData, std::vector<std
 			if (gridData[gridNum.first - i][gridNum.second] != 0 && checker[1] == 0) {
 				checker[1] = 1;
 
-				FirstStartPos.y += 63.0f * (radius - i) - 35.0f;
+				FirstStartPos.y += 63.0f * (radius - i) - 15.0f;
 				if (gridData[gridNum.first - i][gridNum.second] == 1) gridData[gridNum.first - i][gridNum.second] = 0;
 			}
 
@@ -54,7 +54,7 @@ void Explosion::SetAABB(std::vector<std::vector<int>>& gridData, std::vector<std
 			if (gridData[gridNum.first][gridNum.second + i] != 0 && checker[2] == 0) {
 				checker[2] = 1;
 
-				SecondEndPos.x -= 100.0f * (radius - i) - 55.0f;
+				SecondEndPos.x -= 100.0f * (radius - i) - 15.0f;
 				if (gridData[gridNum.first][gridNum.second + i] == 1) gridData[gridNum.first][gridNum.second + i] = 0;
 			}
 		
@@ -62,7 +62,7 @@ void Explosion::SetAABB(std::vector<std::vector<int>>& gridData, std::vector<std
 			if (gridData[gridNum.first][gridNum.second - i] != 0 && checker[3] == 0) {
 				checker[3] = 1;
 
-				SecondStartPos.x += 100.0f * (radius - i) - 55.0f;
+				SecondStartPos.x += 100.0f * (radius - i) - 15.0f;
 				if (gridData[gridNum.first][gridNum.second - i] == 1) gridData[gridNum.first][gridNum.second - i] = 0;
 			}
 	}

@@ -22,12 +22,16 @@ public:
 	void SetSpeed(float speed) { this->speed = speed; }
 	float GetSpeed() { return this->speed; }
 
+	void Kill() { isDead = true, animFrame = 0; }
+	bool IsDead() { return isDead; }
+
 	// animations
 	virtual void MoveAnimation(float dt) = 0;
+	virtual void DeathAnimation(float dt) = 0;
 
 	// collision
-	void ProcessCollision(GameObject& other, float dt);
-	void ProcessMapCollision(float dt);
+	bool ProcessCollision(GameObject& other, float dt);
+	bool ProcessMapCollision(float dt);
 
 	virtual ~CharacterObject() {};
 
@@ -37,8 +41,9 @@ protected:
 
 	// - animation
 	float moveAnimationTime = 0.0f, moveAnimationInterval = 0.18f;
+	float deathAnimationTime = 0.0f, deathAnimationInterval = 0.25f, deathDelay = 0.75f;
 	int animFrame = 0;
-	bool animToggle = true;
+	bool animToggle = true, isDead = false;
 
 	MoveDirection mDir = CHAR_STAND;
 

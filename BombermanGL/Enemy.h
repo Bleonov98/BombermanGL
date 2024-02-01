@@ -9,15 +9,18 @@ public:
 	Enemy(glm::vec2 position, glm::vec2 size, float speed, float angle = 0.0f, glm::vec3 color = glm::vec3(1.0f)) : CharacterObject(position, size, speed, angle, color) {
 		mDir = CHAR_MOVERIGHT;
 		lastDir = mDir;
+
+		moveAnimationInterval = 0.4f;
 	};
 
 	virtual void MoveAnimation(float dt) = 0;
+	virtual void DeathAnimation(float dt) = 0;
 
 	void Move(float dt);
 	void ChangePosition();
 	void SetChangePosInterval(float changePosInterval) { this->changePosInterval = changePosInterval; }
 
-private:
+protected:
 
 	MoveDirection lastDir;
 	float changePosInterval = 0.0f, changePosTime = 0.0f;

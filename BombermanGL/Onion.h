@@ -9,6 +9,7 @@ public:
 	};
 
 	void MoveAnimation(float dt) override;
+	void DeathAnimation(float dt) override;
 
 private:
 
