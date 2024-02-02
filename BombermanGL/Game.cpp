@@ -167,6 +167,23 @@ void Game::LoadResources()
     ResourceManager::LoadTexture("onion/onion_2.png", true, "onion_2");
     ResourceManager::LoadTexture("onion/onion_death_0.png", true, "onion_death_0");
     ResourceManager::LoadTexture("onion/onion_death_1.png", true, "onion_death_1");
+
+    // - - - blob
+    ResourceManager::LoadTexture("blob/blob_0.png", true, "blob_0");
+    ResourceManager::LoadTexture("blob/blob_1.png", true, "blob_1");
+    ResourceManager::LoadTexture("blob/blob_2.png", true, "blob_2");
+    ResourceManager::LoadTexture("blob/blob_death_0.png", true, "blob_death_0");
+    ResourceManager::LoadTexture("blob/blob_death_1.png", true, "blob_death_1");
+    ResourceManager::LoadTexture("blob/blob_death_2.png", true, "blob_death_2");
+    ResourceManager::LoadTexture("blob/blob_death_3.png", true, "blob_death_3");
+
+    // - - - bear
+    ResourceManager::LoadTexture("bear/bear_0.png", true, "bear_0");
+    ResourceManager::LoadTexture("bear/bear_1.png", true, "bear_1");
+    ResourceManager::LoadTexture("bear/bear_2.png", true, "bear_2");
+    ResourceManager::LoadTexture("bear/bear_death_0.png", true, "bear_death_0");
+    ResourceManager::LoadTexture("bear/bear_death_1.png", true, "bear_death_1");
+
 }
 
 // - - - - - Main functions
@@ -226,6 +243,7 @@ void Game::Update(float dt)
 
         for (auto i : enemyList)
         {
+            if (i->GetMoveType() == ALGORITHM) i->FindTarget();
             i->Move(dt);
         }
          
@@ -327,6 +345,8 @@ void Game::CheckCollisions(float dt)
         // - - - - - -
 
         // Player collision
+    player->ProcessMapCollision(dt);
+
     for (auto brick : brickList)
     {
         player->ProcessCollision(*brick, dt);
@@ -407,6 +427,7 @@ void Game::ProcessExplosion(glm::vec2 bombPosition)
 void Game::SpawnEnemies()
 {
     Onion* onion;
+    Blob* blob;
 
     for (int i = 0; i < 3; ++i)
     {
@@ -415,6 +436,11 @@ void Game::SpawnEnemies()
         characterList.push_back(onion);
         enemyList.push_back(onion);
     }
+
+    blob = new Blob(GetFreeRandomCell() + glm::vec2(2.5f), glm::vec2(cellWidth, cellHeight) - glm::vec2(5.0f), 150.0f);
+    objList.push_back(blob);
+    characterList.push_back(blob);
+    enemyList.push_back(blob);
 }
 
 glm::vec2 Game::FindNearestCell()
@@ -507,3 +533,5 @@ Game::~Game()
     brickList.clear(); 
     explosionList.clear();
 }
+
+// bear find function, fix changepos enemies function, boss, portal, stats, levels, fix;

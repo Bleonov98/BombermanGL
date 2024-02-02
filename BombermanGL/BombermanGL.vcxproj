@@ -106,7 +106,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>..\libraries\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <LanguageStandard>stdcpp20</LanguageStandard>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -138,6 +138,8 @@
   <ItemGroup>
     <ClCompile Include="..\libraries\Include\glad\glad.c" />
     <ClCompile Include="AABB.cpp" />
+    <ClCompile Include="Bear.cpp" />
+    <ClCompile Include="Blob.cpp" />
     <ClCompile Include="Bomb.cpp" />
     <ClCompile Include="Bonus.cpp" />
     <ClCompile Include="Brick.cpp" />
@@ -156,6 +158,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h" />
+    <ClInclude Include="Bear.h" />
+    <ClInclude Include="Blob.h" />
     <ClInclude Include="Bomb.h" />
     <ClInclude Include="Bonus.h" />
     <ClInclude Include="Brick.h" />

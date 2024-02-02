@@ -49,7 +49,13 @@
     <ClCompile Include="Enemy.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Onion.cpp" />
+    <ClCompile Include="Onion.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Blob.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="Bear.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h">
@@ -97,7 +103,13 @@
     <ClInclude Include="Enemy.h">
       <Filter>header</Filter>
     </ClInclude>
-    <ClInclude Include="Onion.h" />
+    <ClInclude Include="Onion.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Blob.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Bear.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\shaders\vShader.vx">

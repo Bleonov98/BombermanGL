@@ -25,3 +25,8 @@ void Enemy::ChangePosition()
 
 	lastDir = mDir;
 }
+
+void Enemy::FindTarget(std::vector<std::vector<int>>& gridData, std::vector<std::vector<glm::vec2>> grid, glm::vec2 nearestCell, glm::vec2 targetCell)
+{
+
+}

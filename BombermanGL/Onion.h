@@ -1,5 +1,8 @@
-#pragma once
+#ifndef ONION_H
+#define ONION_H
+
 #include "Enemy.h"
+
 class Onion : public Enemy
 {
 public:
@@ -15,3 +18,4 @@ private:
 
 };
 
+#endif // !ONION_H

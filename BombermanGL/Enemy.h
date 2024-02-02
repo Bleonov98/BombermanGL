@@ -1,6 +1,11 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 
+enum MoveType {
+	COMMON,
+	ALGORITHM
+};
+
 #include "CharacterObject.h"
 class Enemy : public CharacterObject
 {
@@ -16,14 +21,19 @@ public:
 	virtual void MoveAnimation(float dt) = 0;
 	virtual void DeathAnimation(float dt) = 0;
 
-	void Move(float dt);
-	void ChangePosition();
-	void SetChangePosInterval(float changePosInterval) { this->changePosInterval = changePosInterval; }
+	virtual void Move(float dt);
+	virtual void ChangePosition();
+	void FindTarget(std::vector<std::vector<int>>& gridData, std::vector<std::vector<glm::vec2>> grid, glm::vec2 nearestCell, glm::vec2 targetCell);
+
+	MoveType GetMoveType() { return this->mType; }
 
 protected:
 
 	MoveDirection lastDir;
+	MoveType mType = COMMON;
+
 	float changePosInterval = 0.0f, changePosTime = 0.0f;
+	std::vector<glm::vec2> targetPath;
 
 };
 

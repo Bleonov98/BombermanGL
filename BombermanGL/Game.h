@@ -22,6 +22,8 @@
 
 #include "Enemy.h"
 #include "Onion.h"
+#include "Blob.h"
+#include "Bear.h"
 
 enum GameState {
 	MENU,
