@@ -70,7 +70,7 @@ public:
 	void SpawnEnemies();
 
 	// calculations
-	glm::vec2 FindNearestCell();
+	glm::vec2 FindNearestCell(GameObject* object);
 	glm::vec2 GetFreeRandomCell();
 
 	// pub vars

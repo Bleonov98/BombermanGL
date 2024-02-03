@@ -243,7 +243,7 @@ void Game::Update(float dt)
 
         for (auto i : enemyList)
         {
-            if (i->GetMoveType() == ALGORITHM) i->FindTarget();
+            if (i->GetMoveType() == ALGORITHM) i->FindTarget(mData, grid, FindNearestCell(i), FindNearestCell(player));
             i->Move(dt);
         }
          
@@ -395,7 +395,7 @@ void Game::ProcessBomb()
     player->PlaceBomb();
 
     // add object
-    Bomb* bomb = new Bomb(FindNearestCell(), glm::vec2(cellWidth - 5.0f, cellHeight - 5.0f));
+    Bomb* bomb = new Bomb(FindNearestCell(player), glm::vec2(cellWidth - 5.0f, cellHeight - 5.0f));
     objList.push_back(bomb);
     bombList.push_back(bomb);
 
@@ -428,6 +428,7 @@ void Game::SpawnEnemies()
 {
     Onion* onion;
     Blob* blob;
+    Bear* bear;
 
     for (int i = 0; i < 3; ++i)
     {
@@ -441,9 +442,14 @@ void Game::SpawnEnemies()
     objList.push_back(blob);
     characterList.push_back(blob);
     enemyList.push_back(blob);
+
+    bear = new Bear(GetFreeRandomCell() + glm::vec2(2.5f), glm::vec2(cellWidth, cellHeight) - glm::vec2(5.0f), 150.0f);
+    objList.push_back(bear);
+    characterList.push_back(bear);
+    enemyList.push_back(bear);
 }
 
-glm::vec2 Game::FindNearestCell()
+glm::vec2 Game::FindNearestCell(GameObject* object)
 {
     glm::vec2 nearestCell;
     float minLength = 0.0f;
@@ -453,7 +459,7 @@ glm::vec2 Game::FindNearestCell()
     {
         for (auto j : i)
         {
-            glm::vec2 diffVec = abs((player->GetPos() + player->GetSize() / 3.5f) - j);
+            glm::vec2 diffVec = abs((object->GetPos() + object->GetSize() / 3.5f) - j);
             float diffLength = sqrt(powf(diffVec.x, 2) + powf(diffVec.y, 2));
 
             if (firstCheck) {

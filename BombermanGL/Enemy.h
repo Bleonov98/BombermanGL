@@ -23,7 +23,7 @@ public:
 
 	virtual void Move(float dt);
 	virtual void ChangePosition();
-	void FindTarget(std::vector<std::vector<int>>& gridData, std::vector<std::vector<glm::vec2>> grid, glm::vec2 nearestCell, glm::vec2 targetCell);
+	void FindTarget(std::vector<std::vector<int>> gridData, std::vector<std::vector<glm::vec2>> grid, glm::vec2 nearestCell, glm::vec2 targetCell);
 
 	MoveType GetMoveType() { return this->mType; }
 
@@ -33,6 +33,7 @@ protected:
 	MoveType mType = COMMON;
 
 	float changePosInterval = 0.0f, changePosTime = 0.0f;
+	int findingRange = 4;
 	std::vector<glm::vec2> targetPath;
 
 };
