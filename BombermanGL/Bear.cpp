@@ -3,11 +3,20 @@
 void Bear::Move(float dt)
 {
 	if (!targetPath.empty()) {
-
 		// calculate direction
-	}
+		unsigned int vert = 2, horiz = 2;
 
-	if (changePosInterval > 0.0f) {
+		if (targetPath.back().x + 5.0f < position.x) horiz = 0;
+		else if (targetPath.back().x + 5.0f > position.x) horiz = 1;
+		if (targetPath.back().y + 5.0f < position.y) vert = 0;
+		else if (targetPath.back().y + 5.0f > position.y) vert = 1;
+
+		if (horiz != 2) mDir = (horiz == 0) ? CHAR_MOVELEFT : CHAR_MOVERIGHT;
+		else if (vert != 2) mDir = (vert == 0) ? CHAR_MOVEUP : CHAR_MOVEDOWN;
+
+		targetPath.pop_back();
+	}
+	else if (changePosInterval > 0.0f) {
 		changePosTime += dt;
 		if (changePosTime >= changePosInterval) {
 			ChangePosition();

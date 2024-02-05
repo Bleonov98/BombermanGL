@@ -21,7 +21,8 @@ void Enemy::Move(float dt)
 void Enemy::ChangePosition()
 {
 	srand(time(NULL));
-	while (mDir == lastDir) mDir = static_cast<MoveDirection>(rand() % CHAR_STAND);
+	
+
 
 	lastDir = mDir;
 }
@@ -32,13 +33,13 @@ void Enemy::FindTarget(std::vector<std::vector<int>> gridData, std::vector<std::
 	if (nearestCell == targetCell) return;
 
 	// find grid position for target and enemy
-	int eRow, eCol, pRow, pCol;
+	int eRow, eCol, tRow, tCol;
 	for (int i = 0; i < grid.size(); ++i)
 	{
 		for (int j = 0; j < grid[i].size(); ++j)
 		{
 			if (grid[i][j] == nearestCell) eRow = i, eCol = j;
-			if (grid[i][j] == targetCell) pRow = i, pCol = j;
+			if (grid[i][j] == targetCell) tRow = i, tCol = j;
 		
 			if (gridData[i][j] > 0) gridData[i][j] = -1; // set all filled cells to -1
 		}
@@ -60,47 +61,71 @@ void Enemy::FindTarget(std::vector<std::vector<int>> gridData, std::vector<std::
 		for (int i = 0; i < wave.size(); i++)
 		{
 			// top cell
-			if (wave[i].first - 1 >= 0) {
-				if (gridData[wave[i].first - 1][wave[i].second] == 0) {
-					nextWave.push_back(std::make_pair(wave[i].first - 1, wave[i].second));
-					gridData[wave[i].first - 1][wave[i].second] = c;
-				}
+			if (wave[i].first > 0 && gridData[wave[i].first - 1][wave[i].second] == 0) {
+				nextWave.push_back(std::make_pair(wave[i].first - 1, wave[i].second));
+				gridData[wave[i].first - 1][wave[i].second] = c;
 			}
 
 			// bottom cell
-			if (wave[i].first + 1 < 11) {
-				if (gridData[wave[i].first + 1][wave[i].second] == 0) {
-					nextWave.push_back(std::make_pair(wave[i].first + 1, wave[i].second));
-					gridData[wave[i].first + 1][wave[i].second] = c;
-				}
+			if (wave[i].first < 10 && gridData[wave[i].first + 1][wave[i].second] == 0) {
+				nextWave.push_back(std::make_pair(wave[i].first + 1, wave[i].second));
+				gridData[wave[i].first + 1][wave[i].second] = c;
 			}
 
 			// right cell
-			if (wave[i].second + 1 < 13) {
-				if (gridData[wave[i].first][wave[i].second + 1] == 0) {
-					nextWave.push_back(std::make_pair(wave[i].first, wave[i].second + 1));
-					gridData[wave[i].first][wave[i].second + 1] = c;
-				}
+			if (wave[i].second < 12 && gridData[wave[i].first][wave[i].second + 1] == 0) {
+				nextWave.push_back(std::make_pair(wave[i].first, wave[i].second + 1));
+				gridData[wave[i].first][wave[i].second + 1] = c;
 			}
 
 			// left cell
-			if (wave[i].second - 1 >= 0) {
-				if (gridData[wave[i].first][wave[i].second - 1] == 0) {
-					nextWave.push_back(std::make_pair(wave[i].first, wave[i].second - 1));
-					gridData[wave[i].first][wave[i].second - 1] = c;
-				}
+			if (wave[i].second > 0 && gridData[wave[i].first][wave[i].second - 1] == 0) {
+				nextWave.push_back(std::make_pair(wave[i].first, wave[i].second - 1));
+				gridData[wave[i].first][wave[i].second - 1] = c;
 			}
 		}
 
-
 		wave.swap(nextWave);
 		nextWave.clear();
-	}
-	if (gridData[pRow][pCol] == c) found = true;
-	
-	if (found) {
-		//while (c > 0) {
 
-		//}
+		if (gridData[tRow][tCol] == c) {
+			found = true;
+			break;
+		}
+	}
+
+	// Make path
+	if (found) {
+		std::pair<int, int> pt = std::make_pair(tRow, tCol);
+		targetPath.push_back(grid[pt.first][pt.second]);
+
+		while (c > 0) {
+			c--;
+			// top cell
+			if (pt.first > 0 && gridData[pt.first - 1][pt.second] == c) {
+				pt.first--;
+				targetPath.push_back(grid[pt.first][pt.second]);
+			}
+
+			// bottom cell
+			if (pt.first < 10 && gridData[pt.first + 1][pt.second] == c) {
+				pt.first++;
+				targetPath.push_back(grid[pt.first][pt.second]);
+			}
+
+			// right cell
+			if (pt.second < 12 && gridData[pt.first][pt.second + 1] == c) {
+				pt.second++;
+				targetPath.push_back(grid[pt.first][pt.second]);
+			}
+
+			// left cell
+			if (pt.second > 0 && gridData[pt.first][pt.second - 1] == c) {
+				pt.second--;
+				targetPath.push_back(grid[pt.first][pt.second]);
+			}
+
+			
+		}
 	}
 }

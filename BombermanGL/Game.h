@@ -102,7 +102,6 @@ private:
 	int width, height;
 
 	float cellWidth, cellHeight;
-	glm::vec2 cellPos;
 	std::vector<std::vector<int>> mData;
 	std::vector<std::vector<glm::vec2>> grid;
 

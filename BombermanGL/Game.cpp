@@ -432,18 +432,18 @@ void Game::SpawnEnemies()
 
     for (int i = 0; i < 3; ++i)
     {
-        onion = new Onion(GetFreeRandomCell() + glm::vec2(2.5f), glm::vec2(cellWidth, cellHeight) - glm::vec2(5.0f), 150.0f);
+        onion = new Onion(GetFreeRandomCell() + glm::vec2(5.0f), glm::vec2(cellWidth, cellHeight) - glm::vec2(10.0f), 150.0f);
         objList.push_back(onion);
         characterList.push_back(onion);
         enemyList.push_back(onion);
     }
 
-    blob = new Blob(GetFreeRandomCell() + glm::vec2(2.5f), glm::vec2(cellWidth, cellHeight) - glm::vec2(5.0f), 150.0f);
+    blob = new Blob(GetFreeRandomCell() + glm::vec2(5.0f), glm::vec2(cellWidth, cellHeight) - glm::vec2(10.0f), 150.0f);
     objList.push_back(blob);
     characterList.push_back(blob);
     enemyList.push_back(blob);
 
-    bear = new Bear(GetFreeRandomCell() + glm::vec2(2.5f), glm::vec2(cellWidth, cellHeight) - glm::vec2(5.0f), 150.0f);
+    bear = new Bear(GetFreeRandomCell() + glm::vec2(5.0f), glm::vec2(cellWidth, cellHeight) - glm::vec2(10.0f), 200.0f);
     objList.push_back(bear);
     characterList.push_back(bear);
     enemyList.push_back(bear);

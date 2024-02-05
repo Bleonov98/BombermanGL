@@ -1,12 +1,13 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 
+#include "CharacterObject.h"
+
 enum MoveType {
 	COMMON,
 	ALGORITHM
 };
 
-#include "CharacterObject.h"
 class Enemy : public CharacterObject
 {
 public:
