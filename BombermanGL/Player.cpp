@@ -32,6 +32,20 @@ void Player::MoveAnimation(float dt)
 
 void Player::DeathAnimation(float dt)
 {
+	deathDelay -= dt;
+	if (deathDelay <= 0.0f) {
+		if (life > 0) life--;
+		else DeleteObject();
+		return;
+	}
+
+	deathAnimationTime += dt;
+	if (deathAnimationTime >= deathAnimationInterval) {
+		SetTexture(ResourceManager::GetTexture("player_death_" + std::to_string(animFrame)));
+
+		if (animFrame < 3) animFrame++;
+		deathAnimationTime = 0.0f;
+	}
 }
 
 void Player::Move(float dt, MoveDirection dir)

@@ -243,7 +243,15 @@ void Game::Update(float dt)
 
         for (auto i : enemyList)
         {
+            if (i->IsDead()) continue;
+
             if (i->GetMoveType() == ALGORITHM) i->FindTarget(mData, grid, FindNearestCell(i), FindNearestCell(player));
+            
+            if (i->ChangePositionTime()) {
+                i->ResetChangeTime();
+                i->ChangePosition(mData, GetGridPos(i));
+            }
+
             i->Move(dt);
         }
          
@@ -332,15 +340,15 @@ void Game::CheckCollisions(float dt)
     {
         for (auto brick : brickList)
         {
-            if (enemy->ProcessCollision(*brick, dt)) enemy->ChangePosition();
+            if (enemy->ProcessCollision(*brick, dt)) enemy->ChangePosition(mData, GetGridPos(enemy));
         }
 
         for (auto bomb : bombList)
         {
-            if (enemy->ProcessCollision(*bomb, dt)) enemy->ChangePosition();
+            if (enemy->ProcessCollision(*bomb, dt)) enemy->ChangePosition(mData, GetGridPos(enemy));
         }
 
-        if (enemy->ProcessMapCollision(dt)) enemy->ChangePosition();
+        if (enemy->ProcessMapCollision(dt)) enemy->ChangePosition(mData, GetGridPos(enemy));
     }
         // - - - - - -
 
@@ -365,6 +373,11 @@ void Game::CheckCollisions(float dt)
         {
            if (i->ExplosionCollision(*j) && j->GetBrickType() == BRICK_COMMON) j->DestroyBrick();
         }
+
+        for (auto character : characterList)
+        {
+            if (i->ExplosionCollision(*character) && !character->IsDead()) character->Kill();
+        }
     }
     // - - - - - - - - - - - 
 }
@@ -385,6 +398,11 @@ void Game::ProcessAnimations(float dt)
     {
         i->ExplosionAnimation(dt);
     }
+    
+    for (auto i : characterList)
+    {
+        if (i->IsDead()) i->DeathAnimation(dt);
+    }
 }
 
 // - - - - - Game
@@ -399,10 +417,16 @@ void Game::ProcessBomb()
     objList.push_back(bomb);
     bombList.push_back(bomb);
 
+    std::pair<int, int> gridPos = GetGridPos(bomb);
+
     std::thread bombDelay([&]() {
-        std::this_thread::sleep_for(std::chrono::duration<float>(bombList[bombList.size() - 1]->GetExplodeDelay()));
+        std::pair<int, int> pos = gridPos;
+        mData[pos.first][pos.second] = 99;
+
+        std::this_thread::sleep_for(std::chrono::duration<float>(sharedBomb->GetExplodeDelay()));
         player->Reload();
-        bombList[bombList.size() - 1]->Explode();
+        mData[pos.first][pos.second] = 0;
+        sharedBomb->Explode();
     });
     bombDelay.detach();
 }
@@ -415,11 +439,13 @@ void Game::ProcessExplosion(glm::vec2 bombPosition)
     Explosion* explosion = new Explosion(explosionPosition, explosionSize, player->GetExplosionRange());
     explosion->SetAABB(mData, grid, bombPosition);
     objList.push_back(explosion);
-    explosionList.push_back(explosion);
+    explosionList.push_back(explosion); 
+
+    std::shared_ptr<Explosion> sharedExp(explosion);
 
     std::thread explosionTh([&]() {
-        std::this_thread::sleep_for(std::chrono::duration<float>(explosionList[explosionList.size() - 1]->GetExplosionDuration()));
-        explosionList[explosionList.size() - 1]->DeleteObject();
+        std::this_thread::sleep_for(std::chrono::duration<float>(sharedExp->GetExplosionDuration()));
+        sharedExp->DeleteObject();
         });
     explosionTh.detach();
 }
@@ -430,23 +456,49 @@ void Game::SpawnEnemies()
     Blob* blob;
     Bear* bear;
 
-    for (int i = 0; i < 3; ++i)
-    {
+    if (level == 1) {
+        for (int i = 0; i < 3; ++i)
+        {
+            onion = new Onion(GetFreeRandomCell() + glm::vec2(5.0f), glm::vec2(cellWidth, cellHeight) - glm::vec2(10.0f), 150.0f);
+            objList.push_back(onion);
+            characterList.push_back(onion);
+            enemyList.push_back(onion);
+        }
+    }
+    else if (level == 2) {
+        for (int i = 0; i < 2; ++i)
+        {
+            onion = new Onion(GetFreeRandomCell() + glm::vec2(5.0f), glm::vec2(cellWidth, cellHeight) - glm::vec2(10.0f), 150.0f);
+            objList.push_back(onion);
+            characterList.push_back(onion);
+            enemyList.push_back(onion);
+        }
+
+        blob = new Blob(GetFreeRandomCell() + glm::vec2(5.0f), glm::vec2(cellWidth, cellHeight) - glm::vec2(10.0f), 150.0f);
+        objList.push_back(blob);
+        characterList.push_back(blob);
+        enemyList.push_back(blob);
+    }
+    else if (level == 3) {
         onion = new Onion(GetFreeRandomCell() + glm::vec2(5.0f), glm::vec2(cellWidth, cellHeight) - glm::vec2(10.0f), 150.0f);
         objList.push_back(onion);
         characterList.push_back(onion);
         enemyList.push_back(onion);
+
+        blob = new Blob(GetFreeRandomCell() + glm::vec2(5.0f), glm::vec2(cellWidth, cellHeight) - glm::vec2(10.0f), 150.0f);
+        objList.push_back(blob);
+        characterList.push_back(blob);
+        enemyList.push_back(blob);
+
+        bear = new Bear(GetFreeRandomCell() + glm::vec2(5.0f), glm::vec2(cellWidth, cellHeight) - glm::vec2(10.0f), 200.0f);
+        objList.push_back(bear);
+        characterList.push_back(bear);
+        enemyList.push_back(bear);
     }
+    
 
-    blob = new Blob(GetFreeRandomCell() + glm::vec2(5.0f), glm::vec2(cellWidth, cellHeight) - glm::vec2(10.0f), 150.0f);
-    objList.push_back(blob);
-    characterList.push_back(blob);
-    enemyList.push_back(blob);
 
-    bear = new Bear(GetFreeRandomCell() + glm::vec2(5.0f), glm::vec2(cellWidth, cellHeight) - glm::vec2(10.0f), 200.0f);
-    objList.push_back(bear);
-    characterList.push_back(bear);
-    enemyList.push_back(bear);
+
 }
 
 glm::vec2 Game::FindNearestCell(GameObject* object)
@@ -494,11 +546,29 @@ glm::vec2 Game::GetFreeRandomCell()
     return freeCell;
 }
 
+std::pair<int, int> Game::GetGridPos(GameObject* object)
+{
+    glm::vec2 nearestCell = FindNearestCell(object);
+
+    int row = 0, col = 0;
+
+    for (int i = 0; i < grid.size(); ++i)
+    {
+        for (int j = 0; j < grid[i].size(); ++j)
+        {
+            if (grid[i][j] == nearestCell) row = i, col = j;
+        }
+    }
+
+    return std::pair<int, int>(std::make_pair(row, col));
+}
+
 // - - - - - Others
 
 void Game::DeleteObjects()
 {
     DeleteObjectFromVector(characterList, false);
+    DeleteObjectFromVector(enemyList, false);
 
     DeleteObjectFromVector(brickList, false);
     DeleteObjectFromVector(bonusList, false);
@@ -540,4 +610,4 @@ Game::~Game()
     explosionList.clear();
 }
 
-// bear find function, fix changepos enemies function, boss, portal, stats, levels, fix;
+// deaths,levels, portal, stats, fix;

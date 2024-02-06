@@ -11,6 +11,9 @@ void Bear::Move(float dt)
 		if (targetPath.back().y + 5.0f < position.y) vert = 0;
 		else if (targetPath.back().y + 5.0f > position.y) vert = 1;
 
+		if (abs(targetPath.back().x + 5.0f - position.x) < 5.0f) horiz = 2;
+		if (abs(targetPath.back().y + 5.0f - position.y) < 5.0f) vert = 2;
+
 		if (horiz != 2) mDir = (horiz == 0) ? CHAR_MOVELEFT : CHAR_MOVERIGHT;
 		else if (vert != 2) mDir = (vert == 0) ? CHAR_MOVEUP : CHAR_MOVEDOWN;
 
@@ -18,10 +21,7 @@ void Bear::Move(float dt)
 	}
 	else if (changePosInterval > 0.0f) {
 		changePosTime += dt;
-		if (changePosTime >= changePosInterval) {
-			ChangePosition();
-			changePosTime = 0.0f;
-		}
+		if (changePosTime >= changePosInterval) changeTime = true;
 	}
 
 	if (mDir == CHAR_MOVELEFT) this->position.x -= this->speed * dt;

@@ -8,6 +8,7 @@ class Player : public CharacterObject
 public:
 
 	Player(glm::vec2 position, glm::vec2 size, float speed, float angle = 0.0f, glm::vec3 color = glm::vec3(1.0f)) : CharacterObject(position, size, speed, angle, color) {
+		deathDelay = 1.05f, deathAnimationInterval = 0.25f;
 		SetTexture(ResourceManager::GetTexture("player_down_0"));
 	};
 
@@ -32,7 +33,7 @@ public:
 
 private:
 
-	int bombCapacity = 1, explosionRange = 2;
+	int bombCapacity = 2, explosionRange = 2, life = 2;
 
 };
 

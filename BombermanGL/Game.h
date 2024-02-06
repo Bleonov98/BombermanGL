@@ -66,12 +66,16 @@ public:
 
 	void ProcessBomb();
 	void ProcessExplosion(glm::vec2 bombPosition);
-	
+
 	void SpawnEnemies();
+
+	void RefreshGameData();
+	void NextLevel();
 
 	// calculations
 	glm::vec2 FindNearestCell(GameObject* object);
 	glm::vec2 GetFreeRandomCell();
+	std::pair<int, int> GetGridPos(GameObject* object);
 
 	// pub vars
 	bool Keys[1024], KeysProcessed[1024], close = false;
@@ -104,6 +108,7 @@ private:
 	float cellWidth, cellHeight;
 	std::vector<std::vector<int>> mData;
 	std::vector<std::vector<glm::vec2>> grid;
+	int level = 1;
 
 	glm::vec2 cursorPos;
 

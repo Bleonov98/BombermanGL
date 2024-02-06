@@ -4,10 +4,7 @@ void Enemy::Move(float dt)
 {
 	if (changePosInterval > 0.0f) {
 		changePosTime += dt;
-		if (changePosTime >= changePosInterval) {
-			ChangePosition();
-			changePosTime = 0.0f;
-		}
+		if (changePosTime >= changePosInterval) changeTime = true;
 	}
 
 	if (mDir == CHAR_MOVELEFT) this->position.x -= this->speed * dt;
@@ -18,13 +15,25 @@ void Enemy::Move(float dt)
 	MoveAnimation(dt);
 }
 
-void Enemy::ChangePosition()
+void Enemy::ChangePosition(std::vector<std::vector<int>> gridData, std::pair<int, int> gridPos)
 {
 	srand(time(NULL));
-	
 
+	int row = gridPos.first, col = gridPos.second;
+	std::vector<MoveDirection> dirVec;
+
+	if (row > 0 && gridData[row - 1][col] == 0) dirVec.push_back(CHAR_MOVEUP);
+	if (row < 10 && gridData[row + 1][col] == 0) dirVec.push_back(CHAR_MOVEDOWN);
+	if (col < 12 && gridData[row][col + 1] == 0) dirVec.push_back(CHAR_MOVERIGHT);
+	if (col > 0 && gridData[row][col - 1] == 0) dirVec.push_back(CHAR_MOVELEFT);
+
+	if (dirVec.empty()) return;
+
+	int dirNum = rand() % dirVec.size();
+	mDir = dirVec[dirNum];
 
 	lastDir = mDir;
+	stabilized = false;
 }
 
 void Enemy::FindTarget(std::vector<std::vector<int>> gridData, std::vector<std::vector<glm::vec2>> grid, glm::vec2 nearestCell, glm::vec2 targetCell)
@@ -96,11 +105,15 @@ void Enemy::FindTarget(std::vector<std::vector<int>> gridData, std::vector<std::
 
 	// Make path
 	if (found) {
+		if (!stabilized) {
+			SetPos(grid[eRow][eCol] + 5.0f);
+			stabilized = true;
+		}
+
 		std::pair<int, int> pt = std::make_pair(tRow, tCol);
 		targetPath.push_back(grid[pt.first][pt.second]);
 
 		while (c > 0) {
-			c--;
 			// top cell
 			if (pt.first > 0 && gridData[pt.first - 1][pt.second] == c) {
 				pt.first--;
@@ -125,7 +138,7 @@ void Enemy::FindTarget(std::vector<std::vector<int>> gridData, std::vector<std::
 				targetPath.push_back(grid[pt.first][pt.second]);
 			}
 
-			
+			c--;
 		}
 	}
 }

@@ -23,7 +23,11 @@ public:
 	virtual void DeathAnimation(float dt) = 0;
 
 	virtual void Move(float dt);
-	virtual void ChangePosition();
+
+	virtual void ChangePosition(std::vector<std::vector<int>> gridData, std::pair<int, int> gridPos);
+	bool ChangePositionTime() { return changeTime; }
+	void ResetChangeTime() { changePosTime = 0.0f, changeTime = false; }
+
 	void FindTarget(std::vector<std::vector<int>> gridData, std::vector<std::vector<glm::vec2>> grid, glm::vec2 nearestCell, glm::vec2 targetCell);
 
 	MoveType GetMoveType() { return this->mType; }
@@ -34,7 +38,10 @@ protected:
 	MoveType mType = COMMON;
 
 	float changePosInterval = 0.0f, changePosTime = 0.0f;
+	bool changeTime = false;
+
 	int findingRange = 4;
+	bool stabilized = false;
 	std::vector<glm::vec2> targetPath;
 
 };
