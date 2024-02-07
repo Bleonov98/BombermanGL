@@ -29,11 +29,14 @@ public:
 	void UpExplosionRange() { this->explosionRange++; }
 	int GetExplosionRange() { return this->explosionRange; }
 
+	bool IsOver() { return gameOver; }
+
 	virtual ~Player() {};
 
 private:
 
 	int bombCapacity = 2, explosionRange = 2, life = 2;
+	bool gameOver = false;
 
 };
 

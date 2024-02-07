@@ -29,6 +29,10 @@ void Game::Init()
 
     InitGrid();
     InitGameObjects();
+
+    player = new Player(grid[0][0], glm::vec2(cellWidth, cellHeight + 20.0f), 180.0f);
+    objList.push_back(player);
+    characterList.push_back(player);
 }
 
 void Game::InitGrid()
@@ -54,11 +58,6 @@ void Game::InitGameObjects()
 {
     InitBricks();
     GenerateLevel();
-
-    player = new Player(grid[0][0], glm::vec2(cellWidth, cellHeight + 20.0f), 180.0f);
-    objList.push_back(player);
-    characterList.push_back(player);
-
     SpawnEnemies();
 }
 
@@ -202,15 +201,23 @@ void Game::ProcessInput(float dt)
 {
     if (gmState == ACTIVE) {
 
-        if (this->Keys[GLFW_KEY_W]) player->Move(dt, CHAR_MOVEUP);
-        else if (this->Keys[GLFW_KEY_A]) player->Move(dt, CHAR_MOVELEFT);
-        else if (this->Keys[GLFW_KEY_S]) player->Move(dt, CHAR_MOVEDOWN);
-        else if (this->Keys[GLFW_KEY_D]) player->Move(dt, CHAR_MOVERIGHT);
-        else player->Move(dt, CHAR_STAND);
+        if (!player->IsDead()) {
+            if (this->Keys[GLFW_KEY_W]) player->Move(dt, CHAR_MOVEUP);
+            else if (this->Keys[GLFW_KEY_A]) player->Move(dt, CHAR_MOVELEFT);
+            else if (this->Keys[GLFW_KEY_S]) player->Move(dt, CHAR_MOVEDOWN);
+            else if (this->Keys[GLFW_KEY_D]) player->Move(dt, CHAR_MOVERIGHT);
+            else player->Move(dt, CHAR_STAND);
+        }
 
-        if (this->Keys[GLFW_KEY_SPACE]) ProcessBomb();
+        if (this->Keys[GLFW_KEY_SPACE] && !KeysProcessed[GLFW_KEY_SPACE]) {
+            ProcessBomb();
+            KeysProcessed[GLFW_KEY_SPACE] = true;
+        }
 
-        if (this->Keys[GLFW_KEY_M]) gmState = PAUSED;
+        if (this->Keys[GLFW_KEY_M] && !KeysProcessed[GLFW_KEY_M]) {
+            gmState = PAUSED;
+            KeysProcessed[GLFW_KEY_M] = true;
+        }
     }
     else {
         if (this->Keys[GLFW_KEY_UP] && !this->KeysProcessed[GLFW_KEY_UP] && cursorPos.y > this->height / 2.0f) {
@@ -265,6 +272,10 @@ void Game::Update(float dt)
         // interactions
         CheckCollisions(dt);
 
+        // Game Conditions
+        if (player->IsDead()) player->IsOver() ? RestartGame() : RestartLevel();
+        if (enemyList.empty()) level == 3 ? gmState = MENU : level++;
+
         // deleting objects if they're done
         DeleteObjects();
     }
@@ -300,13 +311,7 @@ void Game::Render()
         DrawObject(i);
     }
 
-    if (gmState == ACTIVE) {
-        // game objects
-    }
-    else {
-        Menu();
-    }
-
+    if (gmState == MENU) Menu();
 }
 
 void Game::DrawObject(GameObject* obj)
@@ -419,14 +424,14 @@ void Game::ProcessBomb()
 
     std::pair<int, int> gridPos = GetGridPos(bomb);
 
-    std::thread bombDelay([&]() {
-        std::pair<int, int> pos = gridPos;
-        mData[pos.first][pos.second] = 99;
+    std::thread bombDelay([&, bomb, gridPos]() {
+        mData[gridPos.first][gridPos.second] = 99;
 
-        std::this_thread::sleep_for(std::chrono::duration<float>(sharedBomb->GetExplodeDelay()));
+        std::this_thread::sleep_for(std::chrono::duration<float>(bomb->GetExplodeDelay()));
         player->Reload();
-        mData[pos.first][pos.second] = 0;
-        sharedBomb->Explode();
+        bomb->Explode();
+
+        mData[gridPos.first][gridPos.second] = 0;
     });
     bombDelay.detach();
 }
@@ -439,14 +444,12 @@ void Game::ProcessExplosion(glm::vec2 bombPosition)
     Explosion* explosion = new Explosion(explosionPosition, explosionSize, player->GetExplosionRange());
     explosion->SetAABB(mData, grid, bombPosition);
     objList.push_back(explosion);
-    explosionList.push_back(explosion); 
+    explosionList.push_back(explosion);
 
-    std::shared_ptr<Explosion> sharedExp(explosion);
-
-    std::thread explosionTh([&]() {
-        std::this_thread::sleep_for(std::chrono::duration<float>(sharedExp->GetExplosionDuration()));
-        sharedExp->DeleteObject();
-        });
+    std::thread explosionTh([&, explosion]() {
+        std::this_thread::sleep_for(std::chrono::duration<float>(explosion->GetExplosionDuration()));
+        explosion->DeleteObject();
+    });
     explosionTh.detach();
 }
 
@@ -499,6 +502,36 @@ void Game::SpawnEnemies()
 
 
 
+}
+
+void Game::RefreshGameData()
+{
+    for (auto i : objList)
+    {
+        delete i;
+    }
+    objList.clear();
+    characterList.clear();
+    enemyList.clear();
+    bonusList.clear();
+    bombList.clear();
+    brickList.clear();
+    explosionList.clear();
+
+    InitGrid();
+    InitGameObjects();
+}
+
+void Game::RestartGame()
+{
+}
+
+void Game::RestartLevel()
+{
+}
+
+void Game::NextLevel()
+{
 }
 
 glm::vec2 Game::FindNearestCell(GameObject* object)
@@ -604,6 +637,7 @@ Game::~Game()
     // -----
 
     characterList.clear();
+    enemyList.clear();
     bonusList.clear();
     bombList.clear();
     brickList.clear(); 

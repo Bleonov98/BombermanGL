@@ -55,7 +55,9 @@
     <ClCompile Include="Blob.cpp">
       <Filter>src</Filter>
     </ClCompile>
-    <ClCompile Include="Bear.cpp" />
+    <ClCompile Include="Bear.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h">
@@ -109,7 +111,9 @@
     <ClInclude Include="Blob.h">
       <Filter>header</Filter>
     </ClInclude>
-    <ClInclude Include="Bear.h" />
+    <ClInclude Include="Bear.h">
+      <Filter>header</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\shaders\vShader.vx">

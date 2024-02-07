@@ -57,7 +57,7 @@ public:
 
 	void Render();
 	void DrawObject(GameObject* obj);
-	//void DrawStats();
+	void DrawStats();
 
 	void CheckCollisions(float dt);
 	void ProcessAnimations(float dt);
@@ -70,6 +70,8 @@ public:
 	void SpawnEnemies();
 
 	void RefreshGameData();
+	void RestartGame();
+	void RestartLevel();
 	void NextLevel();
 
 	// calculations

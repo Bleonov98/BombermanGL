@@ -35,7 +35,7 @@ void Player::DeathAnimation(float dt)
 	deathDelay -= dt;
 	if (deathDelay <= 0.0f) {
 		if (life > 0) life--;
-		else DeleteObject();
+		else gameOver = true;
 		return;
 	}
 
