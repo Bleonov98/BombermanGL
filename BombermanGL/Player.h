@@ -2,6 +2,7 @@
 #define PLAYER_H
 
 #include "CharacterObject.h"
+#include "Bonus.h"
 
 class Player : public CharacterObject
 {
@@ -22,12 +23,13 @@ public:
 	void DeathAnimation(float dt) override;
 
 	// gameplay
-	void Reload() { this->bombCapacity++; }
-	void PlaceBomb() { this->bombCapacity--; }
-	bool IsReloaded() { return this->bombCapacity > 0; }
+	void Reload() { if (this->ammo < bombCapacity) this->ammo++; }
+	void PlaceBomb() { if (ammo > 0) this->ammo--; }
+	bool IsReloaded() { return this->ammo > 0; }
 
-	void UpExplosionRange() { this->explosionRange++; }
+	void ProcessBonus(BonusType bonusType);
 	int GetExplosionRange() { return this->explosionRange; }
+	int GetLifes() { return this->life; }
 
 	bool IsOver() { return gameOver; }
 
@@ -35,7 +37,7 @@ public:
 
 private:
 
-	int bombCapacity = 2, explosionRange = 2, life = 2;
+	int bombCapacity = 1, ammo = 1, explosionRange = 2, life = 2;
 	bool gameOver = false;
 
 };

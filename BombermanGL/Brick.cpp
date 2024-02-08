@@ -2,8 +2,8 @@
 
 void Brick::ChangeColor()
 {
-	if (this->color == glm::vec3(1.0f)) this->color = glm::vec3(1.0f, 1.0f, 0.0f);
-	else this->color = glm::vec3(1.0f);
+	if (this->color == glm::vec3(0.5f)) this->color = glm::vec3(1.0f, 1.0f, 0.0f);
+	else this->color = glm::vec3(0.5f);
 }
 
 void Brick::BlinkAnimation(float dt)

@@ -21,8 +21,8 @@ public:
 
 private:
 
-	float explosionAnimationInterval = 0.12f, explosionAnimationTime = 0.0f;
-	float explosionDuration = 0.6f;
+	float explosionAnimationInterval = 0.1f, explosionAnimationTime = 0.0f;
+	float explosionDuration = 0.35f;
 	int animFrame = 1, radius;
 	AABB hBox2;
 

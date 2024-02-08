@@ -68,6 +68,7 @@ public:
 	void ProcessExplosion(glm::vec2 bombPosition);
 
 	void SpawnEnemies();
+	void SpawnBonus(glm::vec2 position);
 
 	void RefreshGameData();
 	void RestartGame();
@@ -111,6 +112,7 @@ private:
 	std::vector<std::vector<int>> mData;
 	std::vector<std::vector<glm::vec2>> grid;
 	int level = 1;
+	bool showBonus = false; 
 
 	glm::vec2 cursorPos;
 

@@ -7,6 +7,7 @@ TextRenderer* text;
 ISoundEngine* sound = irrklang::createIrrKlangDevice();
 
 GameObject* map;
+GameObject* field;
 
 Player* player;
 
@@ -26,6 +27,8 @@ void Game::Init()
     // background/map
     map = new GameObject(glm::vec2(0.0f, 80.0f), glm::vec2(this->width, this->height - 80.0f));
     map->SetTexture(ResourceManager::GetTexture("map"));
+    field = new GameObject(glm::vec2(0.0f, 80.0f), glm::vec2(this->width, this->height - 80.0f));
+    field->SetTexture(ResourceManager::GetTexture("field"));
 
     InitGrid();
     InitGameObjects();
@@ -102,7 +105,12 @@ void Game::GenerateLevel()
         }
     }
 
-    brickList[rand() % brickList.size()]->SetBrickBonus();
+    for (int i = 0; i < 2;)
+    {
+        int randNum = rand() % brickList.size();
+        if (!brickList[randNum]->IsBonusBrick() && brickList[randNum]->GetBrickType() == BRICK_COMMON) brickList[randNum]->SetBrickBonus(), i++;
+    }
+    
 }
 
 void Game::LoadResources()
@@ -112,8 +120,9 @@ void Game::LoadResources()
     // sprites
     
     // - - - map, bricks
-    ResourceManager::LoadTexture("map/map.png", false, "map");
-    ResourceManager::LoadTexture("map/stone.png", false, "stone");
+    ResourceManager::LoadTexture("map/map.png", true, "map");
+    ResourceManager::LoadTexture("map/field.png", true, "field");
+    ResourceManager::LoadTexture("map/stone.png", true, "stone");
 
     ResourceManager::LoadTexture("map/brick.png", false, "brick");
     ResourceManager::LoadTexture("map/brick_0.png", true, "brick_0");
@@ -123,11 +132,11 @@ void Game::LoadResources()
     ResourceManager::LoadTexture("map/brick_4.png", true, "brick_4");
 
     // - - - bonuses
-    ResourceManager::LoadTexture("bonuses/bonus_fire.png", false, "bonus_fire");
-    ResourceManager::LoadTexture("bonuses/bonus_life.png", false, "bonus_life");
-    ResourceManager::LoadTexture("bonuses/bonus_speed.png", false, "bonus_speed");
-    ResourceManager::LoadTexture("bonuses/bonus_bomb.png", false, "bonus_bomb");
-    ResourceManager::LoadTexture("bonuses/bonus_jacket.png", false, "bonus_jacket");
+    ResourceManager::LoadTexture("bonuses/bonus_fire.png", true, "bonus_fire");
+    ResourceManager::LoadTexture("bonuses/bonus_life.png", true, "bonus_life");
+    ResourceManager::LoadTexture("bonuses/bonus_speed.png", true, "bonus_speed");
+    ResourceManager::LoadTexture("bonuses/bonus_bomb.png", true, "bonus_bomb");
+    ResourceManager::LoadTexture("bonuses/bonus_jacket.png", true, "bonus_jacket");
 
     // - - - player
     ResourceManager::LoadTexture("player/player_down_0.png", true, "player_down_0");
@@ -209,7 +218,7 @@ void Game::ProcessInput(float dt)
             else player->Move(dt, CHAR_STAND);
         }
 
-        if (this->Keys[GLFW_KEY_SPACE] && !KeysProcessed[GLFW_KEY_SPACE]) {
+        if (this->Keys[GLFW_KEY_SPACE] && !KeysProcessed[GLFW_KEY_SPACE] && player->IsReloaded()) {
             ProcessBomb();
             KeysProcessed[GLFW_KEY_SPACE] = true;
         }
@@ -274,7 +283,10 @@ void Game::Update(float dt)
 
         // Game Conditions
         if (player->IsDead()) player->IsOver() ? RestartGame() : RestartLevel();
-        if (enemyList.empty()) level == 3 ? gmState = MENU : level++;
+        if (enemyList.empty() && !showBonus) {
+            // SpawnPortal();
+            showBonus = true;
+        }
 
         // deleting objects if they're done
         DeleteObjects();
@@ -284,12 +296,13 @@ void Game::Update(float dt)
 void Game::Render()
 {
     // background/map/stats
-    DrawObject(map);
+    DrawObject(field);
     
     for (auto i : explosionList)
     {
         DrawObject(i);
     }
+    DrawObject(map);
 
     for (auto i : brickList)
     {
@@ -369,19 +382,38 @@ void Game::CheckCollisions(float dt)
     {
         player->ProcessCollision(*bomb, dt);
     }
+
+    for (auto bonus : bonusList)
+    {
+        if (player->ObjectCollision(*bonus)) {
+            player->ProcessBonus(bonus->GetBonusType());
+            bonus->DeleteObject();
+        }
+    }
         // - - - - - - - - -
 
     // explosion collision
     for (auto i : explosionList)
     {
-        for (auto j : brickList)
+        for (auto brick : brickList)
         {
-           if (i->ExplosionCollision(*j) && j->GetBrickType() == BRICK_COMMON) j->DestroyBrick();
+            if (i->ExplosionCollision(*brick) && brick->GetBrickType() == BRICK_COMMON && !brick->IsDestroyed()) {
+                brick->DestroyBrick();
+                if (brick->IsBonusBrick()) SpawnBonus(brick->GetPos());
+            }
         }
 
         for (auto character : characterList)
         {
             if (i->ExplosionCollision(*character) && !character->IsDead()) character->Kill();
+        }
+
+        for (auto bomb : bombList)
+        {
+            if (i->ExplosionCollision(*bomb) && !bomb->Exploded()) {
+                player->Reload();
+                bomb->Explode();
+            }
         }
     }
     // - - - - - - - - - - - 
@@ -408,13 +440,20 @@ void Game::ProcessAnimations(float dt)
     {
         if (i->IsDead()) i->DeathAnimation(dt);
     }
+
+    if (showBonus) {
+        for (auto i : brickList)
+        {
+            if (i->IsBonusBrick()) i->BlinkAnimation(dt);
+        }
+    }
+        
 }
 
-// - - - - - Game
+// - - - - - Game 
 
 void Game::ProcessBomb()
 {
-    if (!player->IsReloaded()) return;
     player->PlaceBomb();
 
     // add object
@@ -428,9 +467,14 @@ void Game::ProcessBomb()
         mData[gridPos.first][gridPos.second] = 99;
 
         std::this_thread::sleep_for(std::chrono::duration<float>(bomb->GetExplodeDelay()));
+
+        if (bomb->Exploded()) {
+            mData[gridPos.first][gridPos.second] = 0;
+            return;
+        }
+
         player->Reload();
         bomb->Explode();
-
         mData[gridPos.first][gridPos.second] = 0;
     });
     bombDelay.detach();
@@ -502,6 +546,17 @@ void Game::SpawnEnemies()
 
 
 
+}
+
+void Game::SpawnBonus(glm::vec2 position)
+{
+    static int bonusCnt = 0;
+
+    Bonus* bonus = new Bonus(position, glm::vec2(cellWidth - 5.0f, cellHeight - 5.0f), static_cast<BonusType>(bonusCnt));
+    objList.push_back(bonus);
+    bonusList.push_back(bonus);
+
+    bonusCnt++;
 }
 
 void Game::RefreshGameData()
@@ -644,4 +699,6 @@ Game::~Game()
     explosionList.clear();
 }
 
-// deaths,levels, portal, stats, fix;
+// stats, fix;
+
+// today's tasks - level up and refreshing data, portal

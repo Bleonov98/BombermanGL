@@ -48,6 +48,14 @@ void Player::DeathAnimation(float dt)
 	}
 }
 
+void Player::ProcessBonus(BonusType bonusType)
+{
+	if (bonusType == BONUS_FIRE) explosionRange++;
+	else if (bonusType == BONUS_BOMB) bombCapacity++, ammo++;
+	else if (bonusType == BONUS_SPEED) speed += 30.0f;
+	else if (bonusType == BONUS_LIFE) life++;
+}
+
 void Player::Move(float dt, MoveDirection dir)
 { 
 	if (this->mDir != dir) animFrame = 0, animToggle = true;

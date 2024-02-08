@@ -7,8 +7,7 @@ enum BonusType {
 	BONUS_FIRE,
 	BONUS_BOMB,
 	BONUS_SPEED,
-	BONUS_LIFE,
-	BONUS_JACKET
+	BONUS_LIFE
 };
 
 class Bonus : public GameObject
@@ -22,7 +21,6 @@ public:
 		else if (type == BONUS_BOMB) SetTexture(ResourceManager::GetTexture("bonus_bomb"));
 		else if (type == BONUS_SPEED) SetTexture(ResourceManager::GetTexture("bonus_speed"));
 		else if (type == BONUS_LIFE) SetTexture(ResourceManager::GetTexture("bonus_life"));
-		else if (type == BONUS_JACKET) SetTexture(ResourceManager::GetTexture("bonus_jacket"));
 	};
 
 	BonusType GetBonusType() { return bonusType; }
