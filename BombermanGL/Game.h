@@ -6,7 +6,6 @@
 
 #include <cmath>
 #include <thread>
-#include <mutex>
 
 #include "TextRenderer.h"
 #include "ResourceManager.h"
@@ -14,12 +13,13 @@
 #include "GameObject.h"
 #include "Brick.h"
 #include "Bonus.h"
+#include "Portal.h"
+
 #include "Bomb.h"
 #include "Explosion.h"
 
 #include "CharacterObject.h"
 #include "Player.h"
-
 #include "Enemy.h"
 #include "Onion.h"
 #include "Blob.h"
@@ -28,7 +28,7 @@
 enum GameState {
 	MENU,
 	ACTIVE,
-	PAUSED
+	END
 };
 
 class Game
@@ -50,7 +50,7 @@ public:
 	void LoadResources();
 
 	// Main functions
-	void Menu();
+	void Menu(bool end);
 
 	void ProcessInput(float dt);
 	void Update(float dt);
@@ -58,6 +58,7 @@ public:
 	void Render();
 	void DrawObject(GameObject* obj);
 	void DrawStats();
+	void Timer();
 
 	void CheckCollisions(float dt);
 	void ProcessAnimations(float dt);
@@ -69,11 +70,10 @@ public:
 
 	void SpawnEnemies();
 	void SpawnBonus(glm::vec2 position);
+	void SpawnPortal();
 
-	void RefreshGameData();
-	void RestartGame();
-	void RestartLevel();
-	void NextLevel();
+	void ClearGameData();
+	void RestartGameData(bool levelUp);
 
 	// calculations
 	glm::vec2 FindNearestCell(GameObject* object);
@@ -106,13 +106,13 @@ private:
 	std::vector<Bomb*> bombList;
 	std::vector<Explosion*> explosionList;
 
-	int width, height;
-
+	int width, height, timeCount = 240;
+	float seconds = 0.0f;
 	float cellWidth, cellHeight;
 	std::vector<std::vector<int>> mData;
 	std::vector<std::vector<glm::vec2>> grid;
 	int level = 1;
-	bool showBonus = false; 
+	bool showBonus = false, win = false;
 
 	glm::vec2 cursorPos;
 

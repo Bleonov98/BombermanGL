@@ -34,7 +34,8 @@ void Player::DeathAnimation(float dt)
 {
 	deathDelay -= dt;
 	if (deathDelay <= 0.0f) {
-		if (life > 0) life--;
+		deathDelay = 0.75f;
+		if (life > 0) life--, isDead = false, respawn = true;
 		else gameOver = true;
 		return;
 	}
@@ -54,6 +55,12 @@ void Player::ProcessBonus(BonusType bonusType)
 	else if (bonusType == BONUS_BOMB) bombCapacity++, ammo++;
 	else if (bonusType == BONUS_SPEED) speed += 30.0f;
 	else if (bonusType == BONUS_LIFE) life++;
+}
+
+void Player::Spawn()
+{
+	position = glm::vec2(120.0f, 100.0f);
+	respawn = false;
 }
 
 void Player::Move(float dt, MoveDirection dir)

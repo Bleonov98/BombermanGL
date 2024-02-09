@@ -30,15 +30,19 @@ public:
 	void ProcessBonus(BonusType bonusType);
 	int GetExplosionRange() { return this->explosionRange; }
 	int GetLifes() { return this->life; }
+	void AddScore() { score += 100; }
+	int GetScore() { return this->score; }
 
 	bool IsOver() { return gameOver; }
+	bool IsRespawned() { return respawn; }
+	void Spawn();
 
 	virtual ~Player() {};
 
 private:
 
-	int bombCapacity = 1, ammo = 1, explosionRange = 2, life = 2;
-	bool gameOver = false;
+	int bombCapacity = 1, ammo = 1, explosionRange = 2, life = 2, score = 0;
+	bool gameOver = false, respawn = false;
 
 };
 

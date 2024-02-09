@@ -8,8 +8,10 @@ ISoundEngine* sound = irrklang::createIrrKlangDevice();
 
 GameObject* map;
 GameObject* field;
+GameObject* stats;
 
 Player* player;
+Portal* portal;
 
 // - - - - - Init functions
 
@@ -29,6 +31,8 @@ void Game::Init()
     map->SetTexture(ResourceManager::GetTexture("map"));
     field = new GameObject(glm::vec2(0.0f, 80.0f), glm::vec2(this->width, this->height - 80.0f));
     field->SetTexture(ResourceManager::GetTexture("field"));
+    stats = new GameObject(glm::vec2(0.0f, 0.0f), glm::vec2(this->width, 80.0f));
+    stats->SetTexture(ResourceManager::GetTexture("stats"));
 
     InitGrid();
     InitGameObjects();
@@ -123,6 +127,8 @@ void Game::LoadResources()
     ResourceManager::LoadTexture("map/map.png", true, "map");
     ResourceManager::LoadTexture("map/field.png", true, "field");
     ResourceManager::LoadTexture("map/stone.png", true, "stone");
+    ResourceManager::LoadTexture("map/portal.png", true, "portal");
+    ResourceManager::LoadTexture("map/stats.png", true, "stats");
 
     ResourceManager::LoadTexture("map/brick.png", false, "brick");
     ResourceManager::LoadTexture("map/brick_0.png", true, "brick_0");
@@ -196,14 +202,22 @@ void Game::LoadResources()
 
 // - - - - - Main functions
 
-void Game::Menu()
+void Game::Menu(bool end)
 {
-    text->RenderText("MENU", glm::vec2(this->width / 2.0f - 65.0f, this->height / 2.0f - 116.0f), 1.75f, glm::vec3(0.75f));
+    if (end) {
+        if (win) text->RenderText("YOU'VE WON!", glm::vec2(this->width / 2.0f - 125.0f, this->height / 2.0f - 116.0f), 1.75f, glm::vec3(0.75f));
+        else text->RenderText("YOU'VE LOST!", glm::vec2(this->width / 2.0f - 135.0f, this->height / 2.0f - 116.0f), 1.75f, glm::vec3(0.75f));
 
-    text->RenderText("Start", glm::vec2(this->width / 2.0f - 20.0f, this->height / 2.0f), 1.0f, glm::vec3(1.0f));
-    text->RenderText("Exit", glm::vec2(this->width / 2.0f - 20.0f, this->height / 2.0f + 40.0f), 1.0f, glm::vec3(1.0f));
+        text->RenderText("PRESS ENTER TO EXIT", glm::vec2(this->width / 2.0f - 20.0f, this->height / 2.0f + 40.0f), 1.0f, glm::vec3(1.0f));
+    }
+    else {
+        text->RenderText("MENU", glm::vec2(this->width / 2.0f - 65.0f, this->height / 2.0f - 116.0f), 1.75f, glm::vec3(0.75f));
 
-    text->RenderText("->", glm::vec2(cursorPos), 1.0f, glm::vec3(1.0f));
+        text->RenderText("Start", glm::vec2(this->width / 2.0f - 20.0f, this->height / 2.0f), 1.0f, glm::vec3(1.0f));
+        text->RenderText("Exit", glm::vec2(this->width / 2.0f - 20.0f, this->height / 2.0f + 40.0f), 1.0f, glm::vec3(1.0f));
+
+        text->RenderText("->", glm::vec2(cursorPos), 1.0f, glm::vec3(1.0f));
+    }
 }
 
 void Game::ProcessInput(float dt)
@@ -224,11 +238,11 @@ void Game::ProcessInput(float dt)
         }
 
         if (this->Keys[GLFW_KEY_M] && !KeysProcessed[GLFW_KEY_M]) {
-            gmState = PAUSED;
+            gmState = MENU;
             KeysProcessed[GLFW_KEY_M] = true;
         }
     }
-    else {
+    else if (gmState == MENU) {
         if (this->Keys[GLFW_KEY_UP] && !this->KeysProcessed[GLFW_KEY_UP] && cursorPos.y > this->height / 2.0f) {
             cursorPos.y -= 40.0f;
             this->KeysProcessed[GLFW_KEY_UP] = true;
@@ -239,14 +253,18 @@ void Game::ProcessInput(float dt)
         }
         else if (this->Keys[GLFW_KEY_ENTER]) {
             if (cursorPos.y == this->height / 2.0f) gmState = ACTIVE;
-            else if (cursorPos.y == this->height / 2.0f + 40.0f) close = true;
+            else if (cursorPos.y == this->height / 2.0f + 40.0f);
         }
     }
+    else if (gmState == END && this->Keys[GLFW_KEY_ENTER]) close = true;
 }
 
 void Game::Update(float dt)
 {
     if (gmState == ACTIVE) {
+
+        Timer();
+        if (timeCount == 0) player->Kill();
 
         // actions
         for (auto i : bombList)
@@ -262,7 +280,7 @@ void Game::Update(float dt)
             if (i->IsDead()) continue;
 
             if (i->GetMoveType() == ALGORITHM) i->FindTarget(mData, grid, FindNearestCell(i), FindNearestCell(player));
-            
+
             if (i->ChangePositionTime()) {
                 i->ResetChangeTime();
                 i->ChangePosition(mData, GetGridPos(i));
@@ -270,9 +288,9 @@ void Game::Update(float dt)
 
             i->Move(dt);
         }
-         
+
         ProcessAnimations(dt);
-   
+
         for (auto i : characterList)
         {
             i->UpdateAABB();
@@ -282,9 +300,15 @@ void Game::Update(float dt)
         CheckCollisions(dt);
 
         // Game Conditions
-        if (player->IsDead()) player->IsOver() ? RestartGame() : RestartLevel();
+        if (!player->IsDead() && player->IsRespawned()) {
+            ClearGameData();
+            RestartGameData(0);
+            player->Spawn();
+        }
+        else if (player->IsDead() && player->IsOver()) win = false, gmState = END;
+            
         if (enemyList.empty() && !showBonus) {
-            // SpawnPortal();
+            SpawnPortal();
             showBonus = true;
         }
 
@@ -297,6 +321,8 @@ void Game::Render()
 {
     // background/map/stats
     DrawObject(field);
+    DrawObject(stats);
+    if (portal != nullptr) DrawObject(portal);
     
     for (auto i : explosionList)
     {
@@ -324,7 +350,10 @@ void Game::Render()
         DrawObject(i);
     }
 
-    if (gmState == MENU) Menu();
+    DrawStats();
+
+    if (gmState == MENU) Menu(false);
+    else if (gmState == END) Menu(true);
 }
 
 void Game::DrawObject(GameObject* obj)
@@ -348,6 +377,28 @@ void Game::DrawObject(GameObject* obj)
     else ResourceManager::GetShader("spriteShader").SetBool("menu", false);
 
     obj->DrawObject();
+}
+
+void Game::DrawStats()
+{
+    text->RenderText(std::to_string(player->GetScore()), glm::vec2(450.0f, 30.0f), 1.0f);
+    text->RenderText(std::to_string(player->GetLifes()), glm::vec2(975.0f, 30.0f), 1.0f);
+
+    text->RenderText(std::to_string(timeCount % 60), glm::vec2(785.0f, 30.0f), 1.0f);
+    text->RenderText(std::to_string(static_cast<int>(std::floor(timeCount / 60))), glm::vec2(685.0f, 30.0f), 1.0f);
+}
+
+void Game::Timer()
+{
+    std::time_t currentTime = std::time(nullptr);
+
+    std::tm timeinfo;
+    localtime_s(&timeinfo, &currentTime);
+
+    float newSeconds = static_cast<float>(timeinfo.tm_sec);
+
+    if (newSeconds > seconds) timeCount--;
+    seconds = newSeconds;
 }
 
 void Game::CheckCollisions(float dt)
@@ -390,6 +441,16 @@ void Game::CheckCollisions(float dt)
             bonus->DeleteObject();
         }
     }
+
+    for (auto enemy : enemyList)
+    {
+        if (player->ObjectCollision(*enemy) && !player->IsDead()) player->Kill();
+    }
+
+    if (portal != nullptr && player->ObjectCollision(*portal)) {
+        ClearGameData();
+        RestartGameData(1);
+    }
         // - - - - - - - - -
 
     // explosion collision
@@ -405,7 +466,7 @@ void Game::CheckCollisions(float dt)
 
         for (auto character : characterList)
         {
-            if (i->ExplosionCollision(*character) && !character->IsDead()) character->Kill();
+            if (i->ExplosionCollision(*character) && !character->IsDead()) character->Kill(), player->AddScore();
         }
 
         for (auto bomb : bombList)
@@ -559,34 +620,33 @@ void Game::SpawnBonus(glm::vec2 position)
     bonusCnt++;
 }
 
-void Game::RefreshGameData()
+void Game::SpawnPortal()
+{
+    portal = new Portal(grid[0][0], glm::vec2(cellWidth, cellHeight));
+    objList.push_back(portal);
+}
+
+void Game::ClearGameData()
 {
     for (auto i : objList)
     {
-        delete i;
+        if (i != player) i->DeleteObject();
     }
-    objList.clear();
-    characterList.clear();
-    enemyList.clear();
-    bonusList.clear();
-    bombList.clear();
-    brickList.clear();
-    explosionList.clear();
 
-    InitGrid();
+    DeleteObjects();
+
+    portal = nullptr;
+    showBonus = false;
+}
+
+void Game::RestartGameData(bool levelUp)
+{
+    if (levelUp && level < 3) level++;
+    else if (levelUp && level >= 3) gmState = END, win = true;
+
+    mData.assign(11, std::vector<int>(13, 0));
     InitGameObjects();
-}
-
-void Game::RestartGame()
-{
-}
-
-void Game::RestartLevel()
-{
-}
-
-void Game::NextLevel()
-{
+    timeCount = 240;
 }
 
 glm::vec2 Game::FindNearestCell(GameObject* object)
@@ -683,6 +743,8 @@ Game::~Game()
 {
     delete text;
     delete sound;
+    delete map;
+    delete field;
 
     for (auto i : objList)
     {
@@ -700,5 +762,3 @@ Game::~Game()
 }
 
 // stats, fix;
-
-// today's tasks - level up and refreshing data, portal

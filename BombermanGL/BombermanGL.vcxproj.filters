@@ -58,6 +58,9 @@
     <ClCompile Include="Bear.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="Portal.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AABB.h">
@@ -112,6 +115,9 @@
       <Filter>header</Filter>
     </ClInclude>
     <ClInclude Include="Bear.h">
+      <Filter>header</Filter>
+    </ClInclude>
+    <ClInclude Include="Portal.h">
       <Filter>header</Filter>
     </ClInclude>
   </ItemGroup>
