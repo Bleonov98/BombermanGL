@@ -14,6 +14,7 @@ public:
 	};
 
 	void UpdateAABB() override { hBox.SetBorder(glm::vec2(position.x + 10.0f, position.y + 25.0f), position + glm::vec2(size.x - 10.0f, size.y)); }
+	bool EnemyCollision(GameObject& object);
 
 	// actions
 	void Move(float dt, MoveDirection dir);
@@ -40,6 +41,8 @@ public:
 	virtual ~Player() {};
 
 private:
+
+	AABB enHBox;
 
 	int bombCapacity = 1, ammo = 1, explosionRange = 2, life = 2, score = 0;
 	bool gameOver = false, respawn = false;

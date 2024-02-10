@@ -63,6 +63,14 @@ void Player::Spawn()
 	respawn = false;
 }
 
+bool Player::EnemyCollision(GameObject& object)
+{
+	glm::vec2 centerPos = position + size / 2.0f;
+	enHBox.SetBorder(centerPos - 15.0f, centerPos + 15.0f);
+
+	return ObjectCollision(enHBox, object);
+}
+
 void Player::Move(float dt, MoveDirection dir)
 { 
 	if (this->mDir != dir) animFrame = 0, animToggle = true;

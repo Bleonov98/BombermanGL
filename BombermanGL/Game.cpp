@@ -5,6 +5,7 @@ using namespace irrklang;
 
 TextRenderer* text;
 ISoundEngine* sound = irrklang::createIrrKlangDevice();
+ISoundSource* music;
 
 GameObject* map;
 GameObject* field;
@@ -19,6 +20,12 @@ void Game::Init()
 {
     srand(time(NULL));
     LoadResources();
+
+    // sounds
+    music = sound->addSoundSourceFromFile("../sounds/music.mp3");
+    music->setDefaultVolume(0.5f);
+
+    sound->play2D(music, true);
 
     // tools
     projection = glm::ortho(0.0f, static_cast<float>(this->width), static_cast<float>(this->height), 0.0f, -1.0f, 1.0f);
@@ -208,7 +215,7 @@ void Game::Menu(bool end)
         if (win) text->RenderText("YOU'VE WON!", glm::vec2(this->width / 2.0f - 125.0f, this->height / 2.0f - 116.0f), 1.75f, glm::vec3(0.75f));
         else text->RenderText("YOU'VE LOST!", glm::vec2(this->width / 2.0f - 135.0f, this->height / 2.0f - 116.0f), 1.75f, glm::vec3(0.75f));
 
-        text->RenderText("PRESS ENTER TO EXIT", glm::vec2(this->width / 2.0f - 20.0f, this->height / 2.0f + 40.0f), 1.0f, glm::vec3(1.0f));
+        text->RenderText("PRESS ENTER TO EXIT", glm::vec2(this->width / 2.0f - 140.0f, this->height / 2.0f + 40.0f), 1.0f, glm::vec3(1.0f));
     }
     else {
         text->RenderText("MENU", glm::vec2(this->width / 2.0f - 65.0f, this->height / 2.0f - 116.0f), 1.75f, glm::vec3(0.75f));
@@ -272,6 +279,7 @@ void Game::Update(float dt)
             if (i->Exploded()) {
                 ProcessExplosion(i->GetPos());
                 i->DeleteObject();
+                sound->play2D("../sounds/explosion.wav");
             }
         }
 
@@ -439,12 +447,13 @@ void Game::CheckCollisions(float dt)
         if (player->ObjectCollision(*bonus)) {
             player->ProcessBonus(bonus->GetBonusType());
             bonus->DeleteObject();
+            sound->play2D("../sounds/item.wav");
         }
     }
 
     for (auto enemy : enemyList)
     {
-        if (player->ObjectCollision(*enemy) && !player->IsDead()) player->Kill();
+        if (player->EnemyCollision(*enemy) && !player->IsDead()) player->Kill();
     }
 
     if (portal != nullptr && player->ObjectCollision(*portal)) {
