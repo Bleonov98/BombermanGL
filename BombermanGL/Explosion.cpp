@@ -14,11 +14,15 @@ void Explosion::ExplosionAnimation(float dt)
 
 void Explosion::SetAABB(std::vector<std::vector<int>>& gridData, std::vector<std::vector<glm::vec2>> grid, glm::vec2 gridPos)
 {
+	float cellWidth, cellHeight;
+	cellWidth = abs(grid[0][1].x - grid[0][0].x);
+	cellHeight = abs(grid[1][0].y - grid[0][0].y);
+
 	// find explosion position point in view of field cell size (100/60)
-	glm::vec2 FirstStartPos = glm::vec2(position.x + size.x / 2.0f - 45.0f, position.y + 5.0f);
-	glm::vec2 FirstEndPos = glm::vec2(position.x + size.x / 2.0f + 45.0f, position.y + size.y - 5.0f);
-	glm::vec2 SecondStartPos = glm::vec2(position.x + 5.0f, position.y + size.y / 2.0f - 25.0f);
-	glm::vec2 SecondEndPos = glm::vec2(position.x + size.x - 5.0f, position.y + size.y / 2.0f + 25.0f);
+	glm::vec2 FirstStartPos = glm::vec2(position.x + size.x / 2.0f - (cellWidth / 2.0f - 5.0f), position.y + 5.0f);
+	glm::vec2 FirstEndPos = glm::vec2(position.x + size.x / 2.0f + (cellWidth / 2.0f - 5.0f), position.y + size.y - 5.0f);
+	glm::vec2 SecondStartPos = glm::vec2(position.x + 5.0f, position.y + size.y / 2.0f - (cellHeight / 2.0f - 5.0f));
+	glm::vec2 SecondEndPos = glm::vec2(position.x + size.x - 5.0f, position.y + size.y / 2.0f + (cellHeight / 2.0f - 5.0f));
 
 	// set side length depending on map data
 	std::pair<int, int> gridNum;
@@ -38,7 +42,7 @@ void Explosion::SetAABB(std::vector<std::vector<int>>& gridData, std::vector<std
 			if (gridData[gridNum.first + i][gridNum.second] != 0 && checker[0] == 0) {
 				checker[0] = 1;
 
-				FirstEndPos.y -= 63.0f * (radius - i) - 35.0f;
+				FirstEndPos.y -= cellHeight * (radius - i) - (cellHeight / 1.25f);
 				if (gridData[gridNum.first + i][gridNum.second] == 1) gridData[gridNum.first + i][gridNum.second] = 0;
 			}
 
@@ -46,7 +50,7 @@ void Explosion::SetAABB(std::vector<std::vector<int>>& gridData, std::vector<std
 			if (gridData[gridNum.first - i][gridNum.second] != 0 && checker[1] == 0) {
 				checker[1] = 1;
 
-				FirstStartPos.y += 63.0f * (radius - i) - 35.0f;
+				FirstStartPos.y += cellHeight * (radius - i) - (cellHeight / 1.25f);
 				if (gridData[gridNum.first - i][gridNum.second] == 1) gridData[gridNum.first - i][gridNum.second] = 0;
 			}
 
@@ -54,7 +58,7 @@ void Explosion::SetAABB(std::vector<std::vector<int>>& gridData, std::vector<std
 			if (gridData[gridNum.first][gridNum.second + i] != 0 && checker[2] == 0) {
 				checker[2] = 1;
 
-				SecondEndPos.x -= 100.0f * (radius - i) - 55.0f;
+				SecondEndPos.x -= cellWidth * (radius - i) - (cellWidth / 1.25f);
 				if (gridData[gridNum.first][gridNum.second + i] == 1) gridData[gridNum.first][gridNum.second + i] = 0;
 			}
 		
@@ -62,7 +66,7 @@ void Explosion::SetAABB(std::vector<std::vector<int>>& gridData, std::vector<std
 			if (gridData[gridNum.first][gridNum.second - i] != 0 && checker[3] == 0) {
 				checker[3] = 1;
 
-				SecondStartPos.x += 100.0f * (radius - i) - 55.0f;
+				SecondStartPos.x += cellWidth * (radius - i) - (cellWidth / 1.25f);
 				if (gridData[gridNum.first][gridNum.second - i] == 1) gridData[gridNum.first][gridNum.second - i] = 0;
 			}
 	}

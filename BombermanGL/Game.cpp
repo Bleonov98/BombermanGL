@@ -232,10 +232,10 @@ void Game::ProcessInput(float dt)
     if (gmState == ACTIVE) {
 
         if (!player->IsDead()) {
-            if (this->Keys[GLFW_KEY_W]) player->Move(dt, CHAR_MOVEUP);
-            else if (this->Keys[GLFW_KEY_A]) player->Move(dt, CHAR_MOVELEFT);
-            else if (this->Keys[GLFW_KEY_S]) player->Move(dt, CHAR_MOVEDOWN);
-            else if (this->Keys[GLFW_KEY_D]) player->Move(dt, CHAR_MOVERIGHT);
+            if (this->Keys[GLFW_KEY_UP]) player->Move(dt, CHAR_MOVEUP);
+            else if (this->Keys[GLFW_KEY_LEFT]) player->Move(dt, CHAR_MOVELEFT);
+            else if (this->Keys[GLFW_KEY_DOWN]) player->Move(dt, CHAR_MOVEDOWN);
+            else if (this->Keys[GLFW_KEY_RIGHT]) player->Move(dt, CHAR_MOVERIGHT);
             else player->Move(dt, CHAR_STAND);
         }
 
@@ -244,9 +244,9 @@ void Game::ProcessInput(float dt)
             KeysProcessed[GLFW_KEY_SPACE] = true;
         }
 
-        if (this->Keys[GLFW_KEY_M] && !KeysProcessed[GLFW_KEY_M]) {
+        if (this->Keys[GLFW_KEY_ESCAPE] && !KeysProcessed[GLFW_KEY_ESCAPE]) {
             gmState = MENU;
-            KeysProcessed[GLFW_KEY_M] = true;
+            KeysProcessed[GLFW_KEY_ESCAPE] = true;
         }
     }
     else if (gmState == MENU) {
@@ -260,7 +260,7 @@ void Game::ProcessInput(float dt)
         }
         else if (this->Keys[GLFW_KEY_ENTER]) {
             if (cursorPos.y == this->height / 2.0f) gmState = ACTIVE;
-            else if (cursorPos.y == this->height / 2.0f + 40.0f);
+            else if (cursorPos.y == this->height / 2.0f + 40.0f) close = true;
         }
     }
     else if (gmState == END && this->Keys[GLFW_KEY_ENTER]) close = true;
@@ -389,11 +389,11 @@ void Game::DrawObject(GameObject* obj)
 
 void Game::DrawStats()
 {
-    text->RenderText(std::to_string(player->GetScore()), glm::vec2(450.0f, 30.0f), 1.0f);
-    text->RenderText(std::to_string(player->GetLifes()), glm::vec2(975.0f, 30.0f), 1.0f);
+    text->RenderText(std::to_string(player->GetScore()), glm::vec2(300.0f, 30.0f), 1.0f);
+    text->RenderText(std::to_string(player->GetLifes()), glm::vec2(670.0f, 30.0f), 1.0f);
 
-    text->RenderText(std::to_string(timeCount % 60), glm::vec2(785.0f, 30.0f), 1.0f);
-    text->RenderText(std::to_string(static_cast<int>(std::floor(timeCount / 60))), glm::vec2(685.0f, 30.0f), 1.0f);
+    text->RenderText(std::to_string(timeCount % 60), glm::vec2(535.0f, 30.0f), 1.0f);
+    text->RenderText(std::to_string(static_cast<int>(std::floor(timeCount / 60))), glm::vec2(470.0f, 30.0f), 1.0f);
 }
 
 void Game::Timer()
@@ -453,7 +453,7 @@ void Game::CheckCollisions(float dt)
 
     for (auto enemy : enemyList)
     {
-        if (player->EnemyCollision(*enemy) && !player->IsDead()) player->Kill();
+        if (player->EnemyCollision(*enemy) && !player->IsDead() && !player->IsRespawned()) player->Kill();
     }
 
     if (portal != nullptr && player->ObjectCollision(*portal)) {
@@ -621,6 +621,10 @@ void Game::SpawnEnemies()
 void Game::SpawnBonus(glm::vec2 position)
 {
     static int bonusCnt = 0;
+
+    if ((level == 1 && bonusCnt >= 1) || 
+        (level == 2 && bonusCnt >= 3) || 
+        (level == 3)) return;
 
     Bonus* bonus = new Bonus(position, glm::vec2(cellWidth - 5.0f, cellHeight - 5.0f), static_cast<BonusType>(bonusCnt));
     objList.push_back(bonus);

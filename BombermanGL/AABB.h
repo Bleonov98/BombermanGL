@@ -21,23 +21,23 @@ public:
     // sides
 
     bool IntersectBottom(const AABB& other) {
-        return (min.x <= other.max.x - 23.0f && max.x >= other.min.x + 23.0f &&
-            max.y >= other.min.y && max.y <= other.min.y + 25.0f);
+        return (min.x <= other.max.x - 13.0f && max.x >= other.min.x + 13.0f &&
+            max.y >= other.min.y && max.y <= other.min.y + 15.0f);
     }
 
     bool IntersectTop(const AABB& other) {
-        return (min.x <= other.max.x - 23.0f && max.x >= other.min.x + 23.0f &&
-            min.y <= other.max.y && min.y >= other.max.y - 25.0f);
+        return (min.x <= other.max.x - 13.0f && max.x >= other.min.x + 13.0f &&
+            min.y <= other.max.y && min.y >= other.max.y - 15.0f);
     }
 
     bool IntersectLeft(const AABB& other) {
-        return (min.x <= other.max.x && min.x >= other.max.x - 25.0f &&
-            min.y <= other.max.y - 23.0f && max.y >= other.min.y + 23.0f);
+        return (min.x <= other.max.x && min.x >= other.max.x - 15.0f &&
+            min.y <= other.max.y - 13.0f && max.y >= other.min.y + 13.0f);
     }
 
     bool IntersectRight(const AABB& other) {
-        return (max.x <= other.min.x + 25.0f && max.x >= other.min.x &&
-            min.y <= other.max.y - 23.0f && max.y >= other.min.y + 23.0f);
+        return (max.x <= other.min.x + 15.0f && max.x >= other.min.x &&
+            min.y <= other.max.y - 13.0f && max.y >= other.min.y + 13.0f);
     }
 
     // Get/Set

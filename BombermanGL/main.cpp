@@ -12,7 +12,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode);
 
 // settings
-const unsigned int SCR_WIDTH = 1600;
+const unsigned int SCR_WIDTH = 1100;
 const unsigned int SCR_HEIGHT = 900;
 
 // timing
@@ -83,7 +83,7 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode)
 {
     // when a user presses the escape key, we set the WindowShouldClose property to true, closing the application
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS || Bomber.close)
+    if (key == GLFW_KEY_F4 && action == GLFW_PRESS || Bomber.close)
         glfwSetWindowShouldClose(window, true);
     if (key >= 0 && key < 1024)
     {

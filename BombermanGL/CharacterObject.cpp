@@ -13,8 +13,8 @@ bool CharacterObject::ProcessCollision(GameObject& other, float dt)
 
 bool CharacterObject::ProcessMapCollision(float dt)
 {
-    if (hBox.GetMin().x <= 145.0f) position.x += speed * dt;
-    else if (hBox.GetMax().x >= 1455.0f) position.x -= speed * dt;
+    if (hBox.GetMin().x <= 100.0f) position.x += speed * dt;
+    else if (hBox.GetMax().x >= 1000.0f) position.x -= speed * dt;
     else if (hBox.GetMin().y <= 145.0f) position.y += speed * dt;
     else if (hBox.GetMax().y >= 840.0f) position.y -= speed * dt;
     else return false;
